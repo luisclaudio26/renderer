@@ -10,9 +10,9 @@ class Shape
 public:
 	typedef std::unique_ptr<Shape> ptr;
 
-	//--------------------------------
-	//------ Introspection code ------
-	//--------------------------------
+	//-----------------------------
+	//------ Debugging tools ------
+	//-----------------------------
 	virtual std::string str() = 0;
 };
 

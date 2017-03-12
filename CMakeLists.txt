@@ -6,6 +6,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 include_directories(include)
 
 #Source files
-file(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "src/*.cpp" 
+					"src/Shapes/*.cpp" 
+					"src/Lights/*.cpp")
 
 add_executable(raytracer ${SOURCES})
