@@ -9,7 +9,7 @@
 class Camera
 {
 public:
-	typedef std::unique_ptr<Camera> pCamera;
+	typedef std::unique_ptr<Camera> ptr;
 
 
 	glm::vec4 pos;
@@ -20,11 +20,11 @@ public:
 	int samplesPerPixel;
 
 
-	static pCamera cameraFromJSON(const nlohmann::json& in)
+	static ptr cameraFromJSON(const nlohmann::json& in)
 	{
 		//TODO: in the future, we shall create different cameras
 		//(ortographics, projective) depending on the parameters.
-		pCamera out(new Camera);
+		ptr out(new Camera);
 
 		out->pos = JSONHelper::vec4FromJSON(in["pos"]);
 		out->up = JSONHelper::vec3FromJSON( in["up"] );
