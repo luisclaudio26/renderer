@@ -5,6 +5,9 @@
 #include "../3rdparty/json.hpp"
 #include "../include/camera.h"
 
+#include "../include/Integrator/integrator.h"
+#include "../include/Integrator/integratorFactory.h"
+
 #include "../include/Shapes/shape.h"
 #include "../include/Shapes/shapeFactory.h"
 
@@ -35,6 +38,9 @@ int main()
 		lights.push_back( LightFactory::create(*l) );
 		std::cout<<lights.back()->str()<<std::endl;
 	}
+
+	//spit image out!
+	Integrator::ptr renderer = IntegratorFactory::create( j["integrator"] );
 
 	return 0;
 }

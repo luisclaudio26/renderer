@@ -19,11 +19,11 @@ public:
 			s->radius = in["shapeParam"]["radius"].get<double>();
 			s->center = JSONHelper::vec4FromJSON( in["pos"] );
 
-			return std::unique_ptr<Shape>(s);
+			return Shape::ptr(s);
 		}
 
 		//TODO: THROW ERROR
-		return std::unique_ptr<Shape>(new Sphere);
+		return Shape::ptr(new Sphere);
 	}
 };
 
