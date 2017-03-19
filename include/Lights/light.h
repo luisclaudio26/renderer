@@ -4,15 +4,21 @@
 #include <memory>
 #include <string>
 
-class Light
+namespace Renderer
 {
-public:
-	typedef std::unique_ptr<Light> ptr;
+	namespace Lighting
+	{
+		class Light
+		{
+		public:
+			typedef std::unique_ptr<Light> ptr;
 
-	//---------------------------
-	//----- Debugging tools -----
-	//---------------------------
-	virtual std::string str() = 0;
-};
+			//---------------------------
+			//----- Debugging tools -----
+			//---------------------------
+			virtual std::string str() = 0;
+		};
+	}
+}
 
 #endif

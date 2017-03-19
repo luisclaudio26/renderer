@@ -2,23 +2,31 @@
 #define _INTEGRATOR_FACTORY_H_
 
 #include "../../3rdparty/json.hpp"
+#include "../error.h"
 #include "integrator.h"
 #include "directLighting.h"
 
-class IntegratorFactory
+namespace Renderer
 {
-public:
-
-	static Integrator::ptr create(const nlohmann::json& in)
+	namespace Integration
 	{
-		std::string type = in["type"].get<std::string>();
+		class IntegratorFactory
+		{
+		public:
 
-		if(type.compare("DirectLighting") == 0)
-			return Integrator::ptr(new DirectLighting);
+			static Integrator::ptr create(const nlohmann::json& in)
+			{
+				std::string type = in["type"].get<std::string>();
 
-		//TODO: THROW ERROR
-		return Integrator::ptr(new DirectLighting);
+				if(type.compare("DirectLighting") == 0)
+					return Integrator::ptr(new DirectLighting);
+
+				//if we're here, there was some error
+				LogError("Unsupported integrator.");
+
+			}
+		};
 	}
-};
+}
 
 #endif

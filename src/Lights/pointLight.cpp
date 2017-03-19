@@ -1,6 +1,12 @@
 #include "../../include/Lights/pointLight.h"
 
-std::string PointLight::str()
+namespace Renderer
 {
-	return "[PointLight]";
+	namespace Lighting
+	{
+		std::string PointLight::str()
+		{
+			return "[PointLight]";
+		}
+	}
 }

@@ -5,15 +5,21 @@
 #include <string>
 #include "../3rdparty/json.hpp"
 
-class Shape
+namespace Renderer
 {
-public:
-	typedef std::unique_ptr<Shape> ptr;
+	namespace Shapes
+	{
+		class Shape
+		{
+		public:
+			typedef std::unique_ptr<Shape> ptr;
 
-	//-----------------------------
-	//------ Debugging tools ------
-	//-----------------------------
-	virtual std::string str() = 0;
-};
+			//-----------------------------
+			//------ Debugging tools ------
+			//-----------------------------
+			virtual std::string str() = 0;
+		};
+	}
+}
 
 #endif

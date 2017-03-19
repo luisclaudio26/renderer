@@ -2,29 +2,36 @@
 #define _SHAPE_FACTORY_H_
 
 #include <memory>
+#include "../error.h"
 #include "shape.h"
 #include "./Shapes/sphere.h"
 
-class ShapeFactory
+namespace Renderer
 {
-public:
-
-	static Shape::ptr create(const nlohmann::json& in)
+	namespace Shapes
 	{
-		std::string type = in["shape"].get<std::string>();
-
-		if(type.compare("sphere") == 0)
+		class ShapeFactory
 		{
-			Sphere* s = new Sphere;
-			s->radius = in["shapeParam"]["radius"].get<double>();
-			s->center = JSONHelper::vec4FromJSON( in["pos"] );
+		public:
 
-			return Shape::ptr(s);
-		}
+			static Shape::ptr create(const nlohmann::json& in)
+			{
+				std::string type = in["shape"].get<std::string>();
 
-		//TODO: THROW ERROR
-		return Shape::ptr(new Sphere);
+				if(type.compare("sphere") == 0)
+				{
+					Sphere* s = new Sphere;
+					s->radius = in["shapeParam"]["radius"].get<double>();
+					s->center = JSONHelper::vec4FromJSON( in["pos"] );
+
+					return Shape::ptr(s);
+				}
+
+				//TODO: THROW ERROR
+				LogError("Unsupported shape.");
+			}
+		};
 	}
-};
+}
 
 #endif

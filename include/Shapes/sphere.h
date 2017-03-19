@@ -5,16 +5,22 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-class Sphere : public Shape
+namespace Renderer
 {
-public:
-	double radius;
-	glm::vec4 center;
+	namespace Shapes
+	{
+		class Sphere : public Shape
+		{
+		public:
+			double radius;
+			glm::vec4 center;
 
-	//-----------------------------
-	//------ Debugging tools ------
-	//-----------------------------
-	std::string str() override;
-};
+			//-----------------------------
+			//------ Debugging tools ------
+			//-----------------------------
+			std::string str() override;
+		};
+	}
+}
 
 #endif

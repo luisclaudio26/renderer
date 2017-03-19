@@ -14,6 +14,12 @@
 #include "../include/Lights/light.h"
 #include "../include/Lights/lightFactory.h"
 
+using namespace Renderer;
+using namespace Shapes;
+using namespace Lighting;
+using namespace Integration;
+using namespace Cameras;
+
 int main()
 {
 	std::fstream in("../data/spheres.json");

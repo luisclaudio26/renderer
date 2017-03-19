@@ -3,10 +3,16 @@
 
 #include <memory>
 
-class Integrator
+namespace Renderer
 {
-public:
-	typedef std::unique_ptr<Integrator> ptr;
-};
+	namespace Integration
+	{
+		class Integrator
+		{
+		public:
+			typedef std::unique_ptr<Integrator> ptr;
+		};
+	}
+}
 
 #endif

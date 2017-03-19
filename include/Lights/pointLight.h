@@ -5,15 +5,21 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-class PointLight : public Light
+namespace Renderer
 {
-public:
-	glm::vec4 pos;
+	namespace Lighting
+	{
+		class PointLight : public Light
+		{
+		public:
+			glm::vec4 pos;
 
-	//---------------------------
-	//----- Debugging tools -----
-	//---------------------------
-	std::string str() override;
-};
+			//---------------------------
+			//----- Debugging tools -----
+			//---------------------------
+			std::string str() override;
+		};
+	}
+}
 
 #endif

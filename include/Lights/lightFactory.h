@@ -5,25 +5,31 @@
 #include "light.h"
 #include "pointLight.h"
 
-class LightFactory
+namespace Renderer
 {
-public:
-
-	static Light::ptr create(const nlohmann::json& in)
+	namespace Lighting
 	{
-		std::string type = in["type"].get<std::string>();
-
-		if(type.compare("point") == 0)
+		class LightFactory
 		{
-			PointLight* pl = new PointLight;
-			pl->pos = JSONHelper::vec4FromJSON( in["lightParam"]["pos"] );
+		public:
 
-			return Light::ptr(pl);
-		}
+			static Light::ptr create(const nlohmann::json& in)
+			{
+				std::string type = in["type"].get<std::string>();
 
-		//TODO: THROW ERROR
-		return Light::ptr(new PointLight);
+				if(type.compare("point") == 0)
+				{
+					PointLight* pl = new PointLight;
+					pl->pos = JSONHelper::vec4FromJSON( in["lightParam"]["pos"] );
+
+					return Light::ptr(pl);
+				}
+
+				//TODO: THROW ERROR
+				return Light::ptr(new PointLight);
+			}
+		};
 	}
-};
+}
 
 #endif
