@@ -7,7 +7,7 @@ namespace Renderer
 	{
 		using Geometry::Ray;
 
-		void Camera::shootRayThrough(float u, float v, Ray& out)
+		void Camera::getRay(float u, float v, Ray& out)
 		{
 			//Mapping the range [-1,1) to [-w/2, w/2)
 			//(and [-h/2, h/2) ). This maps our <u,v>

@@ -8,13 +8,10 @@ namespace Renderer
 {
 	namespace Integration
 	{
-		using Geometry::Ray;
+		using namespace Geometry;
 
 		void Integrator::addCamera(const Camera::ptr& c) { this->cam = c; }
-	
-		void Integrator::addLight(const Light::ptr& l) { this->lights.push_back(l); }
-
-		void Integrator::addShape(const Shape::ptr& s) { this->shapes.push_back(s); }
+		void Integrator::addScene(const SceneManager::ptr& s) { this->scene = s; }
 
 		void Integrator::render(const std::string& path) const
 		{
@@ -31,7 +28,8 @@ namespace Renderer
 					float u = ((2.0f*i - cam->hRes) / cam->hRes) + 0.5f;
 					float v = ((2.0f*j - cam->vRes) / cam->vRes) + 0.5f;
 
-					Ray r; cam->shootRayThrough(u, v, r);
+					Ray r; cam->getRay(u, v, r);
+					Intersection inter; scene->shootCameraRay(r, inter);
 				}
 
 			writePixelsToFile(path.c_str(), cam->hRes, cam->vRes, img);

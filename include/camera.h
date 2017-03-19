@@ -49,7 +49,7 @@ namespace Renderer
 				h = w / aspectRatio;
 		 	}
 
-			void shootRayThrough(float u, float v, Geometry::Ray& out);
+			void getRay(float u, float v, Geometry::Ray& out);
 
 			//---------------------------
 			//------ Static stuff -------

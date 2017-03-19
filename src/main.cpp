@@ -19,6 +19,7 @@ using namespace Shapes;
 using namespace Lighting;
 using namespace Integration;
 using namespace Cameras;
+using namespace Scene;
 
 int main()
 {
@@ -27,6 +28,7 @@ int main()
 	in >> j;
 
 	Integrator::ptr renderer = IntegratorFactory::create( j["integrator"] );
+	SceneManager::ptr scene(new SceneManager); renderer->addScene(scene);
 
 	//camera
 	Camera::ptr pCam = Camera::cameraFromJSON( j["camera"] );
@@ -37,7 +39,7 @@ int main()
 	for(auto s = geometry.begin(); s != geometry.end(); ++s)
 	{
 		Shape::ptr shape = ShapeFactory::create(*s);
-		renderer->addShape(shape);
+		scene->addShape(shape);
 	}
 
 	//lighting
@@ -45,7 +47,7 @@ int main()
 	for(auto l = lighting.begin(); l != lighting.end(); ++l)
 	{
 		Light::ptr light = LightFactory::create(*l);
-		renderer->addLight(light);
+		scene->addLight(light);
 	}
 
 	renderer->render("../output/out.ppm");
