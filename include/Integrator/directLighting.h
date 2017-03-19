@@ -8,7 +8,7 @@ namespace Renderer
 		class DirectLighting : public Integrator
 		{
 		public:
-				
+			
 		};
 	}
 }

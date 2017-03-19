@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <string>
-#include "../3rdparty/json.hpp"
 
 namespace Renderer
 {
@@ -12,7 +11,7 @@ namespace Renderer
 		class Shape
 		{
 		public:
-			typedef std::unique_ptr<Shape> ptr;
+			typedef std::shared_ptr<Shape> ptr;
 
 			//-----------------------------
 			//------ Debugging tools ------

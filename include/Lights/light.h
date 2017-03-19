@@ -11,7 +11,7 @@ namespace Renderer
 		class Light
 		{
 		public:
-			typedef std::unique_ptr<Light> ptr;
+			typedef std::shared_ptr<Light> ptr;
 
 			//---------------------------
 			//----- Debugging tools -----

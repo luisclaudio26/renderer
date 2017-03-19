@@ -13,7 +13,7 @@ namespace Renderer
 		class Camera
 		{
 		public:
-			typedef std::unique_ptr<Camera> ptr;
+			typedef std::shared_ptr<Camera> ptr;
 
 
 			glm::vec4 pos;

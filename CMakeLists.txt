@@ -8,6 +8,7 @@ include_directories(include)
 #Source files
 file(GLOB SOURCES "src/*.cpp" 
 					"src/Shapes/*.cpp" 
-					"src/Lights/*.cpp")
+					"src/Lights/*.cpp"
+					"src/Integrator/*.cpp")
 
 add_executable(raytracer ${SOURCES})
