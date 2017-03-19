@@ -18,23 +18,23 @@ namespace Renderer
 
 		void Integrator::render(const std::string& path) const
 		{
-			Pixel255* img = new Pixel255[cam->w * cam->h];
-			memset(img, 0, sizeof(Pixel255) * cam->w * cam->h);
+			Pixel255* img = new Pixel255[cam->hRes * cam->vRes];
+			memset(img, 0, sizeof(Pixel255) * cam->hRes * cam->vRes);
 
-			for(int i = 0; i < cam->w; ++i)
-				for(int j = 0; j < cam->h; ++j)
+			for(int i = 0; i < cam->hRes; ++i)
+				for(int j = 0; j < cam->vRes; ++j)
 				{
 					//Image space is in range [-1, 1),
 					//in both directions. We transform pixels
 					//from device coordinates to image coordinates.
 					//TODO: correctly sample this
-					float u = ((2.0f*i - cam->w) / cam->w) + 0.5f;
-					float v = ((2.0f*j - cam->h) / cam->h) + 0.5f;
+					float u = ((2.0f*i - cam->hRes) / cam->hRes) + 0.5f;
+					float v = ((2.0f*j - cam->vRes) / cam->vRes) + 0.5f;
 
 					Ray r; cam->shootRayThrough(u, v, r);
 				}
 
-			writePixelsToFile(path.c_str(), cam->w, cam->h, img);
+			writePixelsToFile(path.c_str(), cam->hRes, cam->vRes, img);
 			delete[] img;
 		}
 	}
