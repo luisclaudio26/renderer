@@ -19,7 +19,8 @@ namespace Renderer
 			{
 				Intersection I; (*s)->intersect(r, I);
 				
-				std::cout<<I.str()<<std::endl;
+				if(I.valid)
+					std::cout<<I.str()<<std::endl;
 
 				if(I.valid && I.t < out.t) out = I;
 			}

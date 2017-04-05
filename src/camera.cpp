@@ -17,7 +17,7 @@ namespace Renderer
 			//Transform ray from camera space to world space
 			//[p,q,r] will be mapped to canonical [x,y,z] space.
 			out.d = cam2world * glm::vec3(-d, x, y);
-			out.o = pos;
+			out.o = cam2world * pos;
 		}
 
 		Camera::ptr Camera::cameraFromJSON(const nlohmann::json& in)

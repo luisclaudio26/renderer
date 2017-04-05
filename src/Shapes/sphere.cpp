@@ -1,6 +1,8 @@
 #include "../../include/Shapes/sphere.h"
 #include <cmath>
 
+#include <iostream>
+
 namespace Renderer
 {
 	namespace Shapes
@@ -26,11 +28,10 @@ namespace Renderer
 			const float EPS = 0.0001;
 
 			glm::vec3 center = glm::vec3(this->center);
-			glm::vec3 o = center - r.o;
 
 			float a = glm::dot(r.d, r.d);
-			float b = -2.0f * glm::dot(o, r.d);
-			float c = glm::dot(o, o);
+			float b = 2.0f * glm::dot( r.d, r.o - center );
+			float c = glm::dot(center, center) - 2.0f * glm::dot(center, r.o) + glm::dot(r.o, r.o) - radius*radius;
 
 			//Neither this
 			if( fabs(a) < EPS ) 
@@ -40,8 +41,16 @@ namespace Renderer
 			}
 
 			float t1, t2, sq_delta, over_2a;
-			sq_delta = sqrt(b*b - 4*a*c);
-			over_2a = 1.0f / 2*a;
+			sq_delta = b*b - 4*a*c;
+
+			if(sq_delta < EPS)
+			{
+				out.valid = false;
+				return;
+			}
+
+			sq_delta = sqrt(sq_delta);
+			over_2a = 1.0f / (2*a);
 			t1 = (-b - sq_delta) * over_2a;
 			t2 = (-b + sq_delta) * over_2a;
 
