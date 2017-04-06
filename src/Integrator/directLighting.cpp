@@ -7,7 +7,7 @@ namespace Renderer
 		void DirectLighting::integrate(const Ray& eye2obj, const Intersection& inter, PixelF& out) const
 		{
 			
-
+			
 
 
 			return;
