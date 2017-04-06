@@ -16,7 +16,7 @@ namespace Renderer
 			double radius;
 			glm::vec4 center;
 
-			void intersect(const Geometry::Ray& r, Geometry::Intersection& out) override;
+			void intersect(const Geometry::Ray& r, Intersection& out) override;
 
 			//-----------------------------
 			//------ Debugging tools ------

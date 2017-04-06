@@ -2,7 +2,7 @@
 
 namespace Renderer
 {
-	namespace BxFD
+	namespace BxDF
 	{
 		void Lambertian::f(const glm::vec3& wi, const glm::vec3& wo, RGBSpectrum& out) const
 		{

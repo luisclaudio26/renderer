@@ -8,19 +8,6 @@ namespace Renderer
 {
 	namespace Geometry
 	{
-		//TODO: Maybe this is not really
-		//"geometric" stuff and should be
-		//moved to another place.
-		typedef struct _inter
-		{
-			bool valid;
-			float t;
-			glm::vec3 normal;
-
-			void operator=(const _inter& lhs);
-			std::string str();
-		} Intersection;
-
 		class Ray
 		{
 		public:

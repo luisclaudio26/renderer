@@ -5,6 +5,7 @@
 #include "../error.h"
 #include "shape.h"
 #include "./Shapes/sphere.h"
+#include "../BxDF/bxdfFactory.h"
 
 namespace Renderer
 {
@@ -23,6 +24,8 @@ namespace Renderer
 					Sphere* s = new Sphere;
 					s->radius = in["shapeParam"]["radius"].get<double>();
 					s->center = JSONHelper::vec4FromJSON( in["pos"] );
+
+					s->material = BxDFFactory::create( in["material"] );
 
 					return Shape::ptr(s);
 				}

@@ -26,7 +26,7 @@ namespace Renderer
 			void addLight(const Light::ptr& l);
 			void addShape(const Shape::ptr& s);
 
-			void shootCameraRay(const Geometry::Ray& r, Geometry::Intersection& out) const;
+			void shootCameraRay(const Geometry::Ray& r, Intersection& out) const;
 		};
 	}
 }

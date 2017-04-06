@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include "../geometry.h"
+#include "../intersection.h"
 
 namespace Renderer
 {
@@ -14,7 +15,9 @@ namespace Renderer
 		public:
 			typedef std::shared_ptr<Shape> ptr;
 
-			virtual void intersect(const Geometry::Ray& r, Geometry::Intersection& out) = 0;
+			BRDF::ptr material;
+
+			virtual void intersect(const Geometry::Ray& r, Intersection& out) = 0;
 
 			//-----------------------------
 			//------ Debugging tools ------
