@@ -1,7 +1,4 @@
 #include "../../include/Integrator/integrator.h"
-#include "../../include/imageWriter.h"
-#include "../../include/geometry.h"
-
 #include <glm/gtx/string_cast.hpp>
 
 namespace Renderer
@@ -30,6 +27,9 @@ namespace Renderer
 
 					Ray r; cam->getRay(u, v, r);
 					Intersection inter; scene->shootCameraRay(r, inter);
+
+					PixelF p; this->integrate(r, inter, p);
+					img[ i*cam->hRes + j ] = pixelFloat2Char(p);
 				}
 
 			writePixelsToFile(path.c_str(), cam->hRes, cam->vRes, img);

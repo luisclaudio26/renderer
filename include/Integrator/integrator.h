@@ -4,6 +4,8 @@
 #include <memory>
 #include "../scene.h"
 #include "../camera.h"
+#include "../geometry.h"
+#include "../imageWriter.h"
 
 namespace Renderer
 {
@@ -11,6 +13,7 @@ namespace Renderer
 	using Shapes::Shape;
 	using Cameras::Camera;
 	using Scene::SceneManager;
+	using namespace Geometry;
 
 	namespace Integration
 	{
@@ -19,6 +22,9 @@ namespace Renderer
 		protected:
 			SceneManager::ptr scene;
 			Camera::ptr cam;
+
+			virtual void integrate(const Ray& eye2obj, 
+									const Intersection& inter, PixelF& out) const = 0;
 
 		public:
 			typedef std::unique_ptr<Integrator> ptr;

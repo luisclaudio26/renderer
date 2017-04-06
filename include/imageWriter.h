@@ -4,9 +4,14 @@
 namespace Renderer
 {
 	typedef struct {
-		unsigned char R, G, B;
+		unsigned char r, g, b;
 	} Pixel255;
 
+	typedef struct {
+		float r, g, b;
+	} PixelF;
+
+	Pixel255 pixelFloat2Char(PixelF p); 
 	void writePixelsToFile(const char* filename, int w, int h, Pixel255* data);
 }
 

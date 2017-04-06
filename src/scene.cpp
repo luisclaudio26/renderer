@@ -18,10 +18,6 @@ namespace Renderer
 			for(auto s = shapes.begin(); s != shapes.end(); ++s)
 			{
 				Intersection I; (*s)->intersect(r, I);
-				
-				if(I.valid)
-					std::cout<<I.str()<<std::endl;
-
 				if(I.valid && I.t < out.t) out = I;
 			}
 		}

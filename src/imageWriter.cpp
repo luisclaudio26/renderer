@@ -4,6 +4,15 @@
 
 namespace Renderer
 {
+	Pixel255 pixelFloat2Char(PixelF p)
+	{
+		Pixel255 out;
+		out.r = (unsigned char)(255.0f * p.r);
+		out.g = (unsigned char)(255.0f * p.g);
+		out.b = (unsigned char)(255.0f * p.b);
+		return out;
+	}
+
 	void writePixelsToFile(const char* filename, int w, int h, Pixel255* data)
 	{
 		FILE* out = fopen(filename, "wb");
