@@ -9,8 +9,20 @@ namespace Renderer
 	{
 		void DirectLighting::integrate(const Ray& eye2obj, const Intersection& inter, RGBSpectrum& out) const
 		{
-			out.r = out.g = out.b = 0.0f;
 			BRDF::ptr material = inter.material;
+
+			//if intersection is not valid, then return background color
+			//(which will be black by default).
+			//It is not efficient to check if intersection is valid here
+			//in integrate(), but in future integration methods, where we
+			//will allow environment maps and stuff alike, it will be useful.
+			if(!inter.valid)
+			{
+				out = RGBSpectrum::black();
+				return;
+			}
+
+			out.r = out.g = out.b = 0.0f;
 			glm::vec3 wo = eye2obj.d;
 
 			//TODO: How to better do this, without copying code
@@ -21,7 +33,7 @@ namespace Renderer
 				//sample each light.
 				//We extract only one sample for point/directional lights,
 				//more for area lights, for example.
-				l->prepare_sampling( eye2obj(inter.t), SAMPLES_PER_LIGHT );
+				l->prepare_sampling( *this->scene, eye2obj(inter.t), SAMPLES_PER_LIGHT );
 
 				while( l->has_next() )
 				{

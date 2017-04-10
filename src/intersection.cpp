@@ -19,5 +19,6 @@ namespace Renderer
 		t = lhs.t;
 		valid = lhs.valid;
 		normal = lhs.normal;
+		material = lhs.material;
 	}
 }

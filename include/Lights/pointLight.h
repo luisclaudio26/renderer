@@ -2,6 +2,7 @@
 #define _POINT_LIGHT_H_
 
 #include "light.h"
+#include "../geometry.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
@@ -9,17 +10,30 @@ namespace Renderer
 {
 	namespace Lighting
 	{
+		using Geometry::Ray;
+
 		class PointLight : public Light
 		{
+		private:
+			//all samples have, of course, the same direction
+			//(as they from the light all to the same point).
+			//This means that even if one, for some reason, takes
+			//N samples of it, all the N samples will be identical.
+			//For this, we precompute everything in prepare_sampling().
+			bool occluded;
+			int n_remaining_samples;
+			Spectra::RGBSpectrum out;
+			Ray wi;
+
 		public:
 			glm::vec4 pos;
 
 			//----------------------------
 			//------ Light sampling ------
 			//----------------------------
-			void prepare_sampling( const glm::vec3& pos, int n_samples ) override;
+			void prepare_sampling( const Scene::SceneManager& scene_handler, const glm::vec3& pos, int n_samples ) override;
 			bool has_next() override;
-			void next_sample( Spectra::RGBSpectrum& out, glm::vec3& wi) override;
+			void next_sample( Spectra::RGBSpectrum& out, glm::vec3& wi ) override;
 
 			//---------------------------
 			//----- Debugging tools -----

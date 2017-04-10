@@ -17,10 +17,10 @@ namespace Renderer
 		bool valid;
 		float t;
 		glm::vec3 normal;
-
 		BRDF::ptr material;
 
 		void operator=(const _inter& lhs);
+
 		std::string str();
 	} Intersection;
 }

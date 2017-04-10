@@ -19,7 +19,6 @@ using namespace Shapes;
 using namespace Lighting;
 using namespace Integration;
 using namespace Cameras;
-using namespace Scene;
 
 int main()
 {
@@ -28,7 +27,7 @@ int main()
 	in >> j;
 
 	Integrator::ptr renderer = IntegratorFactory::create( j["integrator"] );
-	SceneManager::ptr scene(new SceneManager); renderer->addScene(scene);
+	Scene::SceneManager::ptr scene(new Scene::SceneManager); renderer->addScene(scene);
 
 	//camera
 	Camera::ptr pCam = Camera::cameraFromJSON( j["camera"] );
