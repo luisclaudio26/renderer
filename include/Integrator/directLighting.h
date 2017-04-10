@@ -13,7 +13,7 @@ namespace Renderer
 		{
 		protected:
 			virtual void integrate(const Ray& eye2obj, 
-									const Intersection& inter, PixelF& out) const override;
+									const Intersection& inter, RGBSpectrum& out) const override;
 		};
 	}
 }

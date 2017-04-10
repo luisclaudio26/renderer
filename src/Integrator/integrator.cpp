@@ -28,8 +28,13 @@ namespace Renderer
 					Ray r; cam->getRay(u, v, r);
 					Intersection inter; scene->shootCameraRay(r, inter);
 
-					PixelF p; this->integrate(r, inter, p);
-					img[ i*cam->hRes + j ] = pixelFloat2Char(p);
+					//TODO: Create a base class Spectrum, which has a
+					//method .rgb()
+					RGBSpectrum p; this->integrate(r, inter, p);
+					Pixel255& out = img[ i*cam->hRes + j ];
+					out.r = p.r;
+					out.g = p.g;
+					out.b = p.b;
 				}
 
 			writePixelsToFile(path.c_str(), cam->hRes, cam->vRes, img);

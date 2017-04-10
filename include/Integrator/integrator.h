@@ -6,6 +6,7 @@
 #include "../camera.h"
 #include "../geometry.h"
 #include "../imageWriter.h"
+#include "../Spectra/rgbSpectrum.h"
 
 namespace Renderer
 {
@@ -24,7 +25,7 @@ namespace Renderer
 			Camera::ptr cam;
 
 			virtual void integrate(const Ray& eye2obj, 
-									const Intersection& inter, PixelF& out) const = 0;
+									const Intersection& inter, RGBSpectrum& out) const = 0;
 
 		public:
 			typedef std::unique_ptr<Integrator> ptr;
