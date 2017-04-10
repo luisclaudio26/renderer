@@ -1,5 +1,7 @@
 #include "../../include/Integrator/directLighting.h"
 
+#include <iostream>
+
 //Where should this be?
 #define SAMPLES_PER_LIGHT 1
 
@@ -43,7 +45,9 @@ namespace Renderer
 					RGBSpectrum brdf;
 					material->f(wi, wo, brdf);
 
-					float cosWiN = glm::dot(wi, wo);
+					std::cout<<ls_spectrum.r<<", "<<ls_spectrum.g<<", "<<ls_spectrum.b<<std::endl;
+
+					float cosWiN = glm::max(glm::dot(wi, wo), 0.0f);
 
 					out.r += ls_spectrum.r * brdf.r * cosWiN;
 					out.g += ls_spectrum.g * brdf.g * cosWiN;

@@ -22,16 +22,16 @@ namespace Renderer
 			//For this, we precompute everything in prepare_sampling().
 			bool occluded;
 			int n_remaining_samples;
-			Spectra::RGBSpectrum out;
 			Ray wi;
+			Spectra::RGBSpectrum out;
 
 		public:
 			glm::vec4 pos;
-
+			
 			//----------------------------
 			//------ Light sampling ------
 			//----------------------------
-			void prepare_sampling( const Scene::SceneManager& scene_handler, const glm::vec3& pos, int n_samples ) override;
+			void prepare_sampling( const Scene::SceneManager& scene_handler, const glm::vec3& p, int n_samples ) override;
 			bool has_next() override;
 			void next_sample( Spectra::RGBSpectrum& out, glm::vec3& wi ) override;
 

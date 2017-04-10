@@ -10,14 +10,14 @@ namespace Renderer
 			return "[PointLight]";
 		}
 
-		void PointLight::prepare_sampling( const Scene::SceneManager& scene_handler, const glm::vec3& pos, int n_samples )
+		void PointLight::prepare_sampling( const Scene::SceneManager& scene_handler, const glm::vec3& p, int n_samples )
 		{
 			this->n_remaining_samples = n_samples;
 			this->wi.o = glm::vec3(this->pos);
-			this->wi.d = this->wi.o - pos;
+			this->wi.d = glm::normalize(this->wi.o - p);
 
 			//Check for occlusion
-			Intersection in; scene_handler.shootCameraRay(-wi, in);
+			Intersection in; scene_handler.shootCameraRay( Ray(p, wi.d), in);
 			this->out = in.valid ? RGBSpectrum::black() : this->light_spectrum;
 		}
 
