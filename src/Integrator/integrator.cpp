@@ -15,8 +15,8 @@ namespace Renderer
 			Pixel255* img = new Pixel255[cam->hRes * cam->vRes];
 			memset(img, 0, sizeof(Pixel255) * cam->hRes * cam->vRes);
 
-			for(int i = 0; i < cam->hRes; ++i)
-				for(int j = 0; j < cam->vRes; ++j)
+			for(int i = 0; i < cam->vRes; ++i)
+				for(int j = 0; j < cam->hRes; ++j)
 				{
 					//Image space is in range [-1, 1),
 					//in both directions. We transform pixels
@@ -32,9 +32,9 @@ namespace Renderer
 					//method .rgb()
 					RGBSpectrum p; this->integrate(r, inter, p);
 					Pixel255& out = img[ i*cam->hRes + j ];
-					out.r = p.r;
-					out.g = p.g;
-					out.b = p.b;
+					out.r = (unsigned char)(p.r*255);
+					out.g = (unsigned char)(p.g*255);
+					out.b = (unsigned char)(p.b*255);
 				}
 
 			writePixelsToFile(path.c_str(), cam->hRes, cam->vRes, img);

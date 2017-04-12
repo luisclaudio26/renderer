@@ -25,7 +25,7 @@ namespace Renderer
 			}
 
 			out.r = out.g = out.b = 0.0f;
-			glm::vec3 wo = eye2obj.d;
+			glm::vec3 wo = -eye2obj.d; //we want wo to go from object to eye
 
 			//TODO: How to better do this, without copying code
 			//for each channel?
@@ -45,9 +45,7 @@ namespace Renderer
 					RGBSpectrum brdf;
 					material->f(wi, wo, brdf);
 
-					std::cout<<ls_spectrum.r<<", "<<ls_spectrum.g<<", "<<ls_spectrum.b<<std::endl;
-
-					float cosWiN = glm::max(glm::dot(wi, wo), 0.0f);
+					float cosWiN = glm::max(glm::dot(-wi, inter.normal), 0.0f);
 
 					out.r += ls_spectrum.r * brdf.r * cosWiN;
 					out.g += ls_spectrum.g * brdf.g * cosWiN;

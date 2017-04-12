@@ -14,6 +14,7 @@ namespace Renderer
 		void SceneManager::shootCameraRay(const Ray& r, Intersection& out) const
 		{
 			out.t = std::numeric_limits<float>::max();
+			out.valid = false;
 
 			for(auto s = shapes.begin(); s != shapes.end(); ++s)
 			{

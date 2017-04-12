@@ -38,8 +38,8 @@ namespace Renderer
 					  FOV(FOV), hRes(hRes), vRes(vRes), d(d)
 		 	{
 		 		glm::vec3 p, q, r;
-				r = look - pos;
-				q = up - glm::dot(up, r)*r;
+				r = glm::normalize(look - pos);
+				q = glm::normalize(up - glm::dot(up, r)*r);
 				p = glm::cross(q, r);
 
 				world2cam = glm::mat3(p, q, r);

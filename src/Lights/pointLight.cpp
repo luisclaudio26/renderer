@@ -1,5 +1,6 @@
 #include "../../include/Lights/pointLight.h"
 #include "../../include/scene.h"
+#include <iostream>
 
 namespace Renderer
 {
@@ -14,10 +15,10 @@ namespace Renderer
 		{
 			this->n_remaining_samples = n_samples;
 			this->wi.o = glm::vec3(this->pos);
-			this->wi.d = glm::normalize(this->wi.o - p);
+			this->wi.d = glm::normalize(p - this->wi.o);
 
 			//Check for occlusion
-			Intersection in; scene_handler.shootCameraRay( Ray(p, wi.d), in);
+			Intersection in; scene_handler.shootCameraRay( Ray(p, -wi.d), in);
 			this->out = in.valid ? RGBSpectrum::black() : this->light_spectrum;
 		}
 
