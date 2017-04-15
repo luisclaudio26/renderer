@@ -37,15 +37,16 @@ namespace Renderer
 					: pos(pos), up(up), look(look), aspectRatio(aspectRatio),
 					  FOV(FOV), hRes(hRes), vRes(vRes), d(d)
 		 	{
+		 		//Don't forget that look-at (r) points to the back of the camera!
 		 		glm::vec3 p, q, r;
-				r = glm::normalize(look - pos);
-				q = glm::normalize(up - glm::dot(up, r)*r);
-				p = glm::cross(q, r);
+				p = glm::normalize(pos - look);
+				q = glm::normalize(up - glm::dot(up, p)*p);
+				r = glm::cross(p, q);
 
 				world2cam = glm::mat3(p, q, r);
-				cam2world = glm::inverse(world2cam);
+				cam2world = glm::transpose(world2cam);
 
-				w = d * tan(FOV * 0.5f);
+				w = 2 * d * tan(FOV * 0.5f);
 				h = w / aspectRatio;
 		 	}
 

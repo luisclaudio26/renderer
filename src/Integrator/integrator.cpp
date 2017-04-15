@@ -21,9 +21,11 @@ namespace Renderer
 					//Image space is in range [-1, 1),
 					//in both directions. We transform pixels
 					//from device coordinates to image coordinates.
+					//We must invert V coordinates because pixel [0,0]
+					//is in top-left corner of the image.
 					//TODO: correctly sample this
-					float u = ((2.0f*i - cam->hRes) / cam->hRes) + 0.5f;
-					float v = ((2.0f*j - cam->vRes) / cam->vRes) + 0.5f;
+					float u = 2.0f*(j - cam->hRes * 0.5f) / cam->hRes;
+					float v = 2.0f*(cam->vRes * 0.5f - i) / cam->vRes;
 
 					Ray r; cam->getRay(u, v, r);
 					Intersection inter; scene->shootCameraRay(r, inter);

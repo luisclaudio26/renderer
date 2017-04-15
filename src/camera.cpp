@@ -16,7 +16,10 @@ namespace Renderer
 
 			//Transform ray from camera space to world space
 			//[p,q,r] will be mapped to canonical [x,y,z] space.
-			out.d = cam2world * glm::vec3(-d, x, y);
+			//We invert X coordinate because negative values of
+			//X in image space will be mapped to positive values
+			//of Z in camera space.
+			out.d = cam2world * glm::vec3(-d, y, -x);
 			out.o = cam2world * pos;
 		}
 
