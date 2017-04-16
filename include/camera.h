@@ -7,6 +7,8 @@
 #include "jsonHelper.h"
 #include "geometry.h"
 
+#include <iostream>
+
 namespace Renderer
 {
 	namespace Cameras
@@ -46,8 +48,15 @@ namespace Renderer
 				world2cam = glm::mat3(p, q, r);
 				cam2world = glm::transpose(world2cam);
 
-				w = 2 * d * tan(FOV * 0.5f);
+				//TODO: FILM CAN'T BE RESIZED AS FUNCTION OF
+				//FILM DISTANCE! It makes us lose the "zooming"
+				//effect of the film plane distance
+				h = 1.0f; w = aspectRatio;
+
+				/*
+				w = 2 * this->d * tan(FOV * 0.5f);
 				h = w / aspectRatio;
+				*/
 		 	}
 
 			void getRay(float u, float v, Geometry::Ray& out);
