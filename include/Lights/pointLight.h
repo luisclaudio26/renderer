@@ -27,6 +27,7 @@ namespace Renderer
 
 		public:
 			glm::vec4 pos;
+			float falloff_a, falloff_b;
 			
 			//----------------------------
 			//------ Light sampling ------

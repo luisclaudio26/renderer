@@ -17,9 +17,13 @@ namespace Renderer
 			this->wi.o = glm::vec3(this->pos);
 			this->wi.d = glm::normalize(p - this->wi.o);
 
+			//light distance, used to compute falloff
+			float d = glm::length(p - this->wi.o);
+			float falloff = this->falloff_a / (falloff_b * d);
+
 			//Check for occlusion
 			Intersection in; scene_handler.shootCameraRay( Ray(p, -wi.d), in);
-			this->out = in.valid ? RGBSpectrum::black() : this->light_spectrum;
+			this->out = in.valid ? RGBSpectrum::black() : this->light_spectrum * falloff;
 		}
 
 		bool PointLight::has_next()
