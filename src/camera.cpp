@@ -19,7 +19,7 @@ namespace Renderer
 			//We invert X coordinate because negative values of
 			//X in image space will be mapped to positive values
 			//of Z in camera space.
-			out.d = cam2world * glm::vec3(-d, y, -x);
+			out.d = glm::normalize(cam2world * glm::vec3(-d, y, -x));
 			out.o = cam2world * pos;
 		}
 
