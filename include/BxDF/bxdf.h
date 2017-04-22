@@ -12,12 +12,17 @@ namespace Renderer
 	
 	namespace BxDF
 	{
+		//Maybe it is more clever to transform Wo to a reference frame
+		//where Normal is the Y-axis, Wi x Normal is X-axis and
+		//Y x X is the Z-axis (where _ x _ is cross product). This would
+		//simplify calculus and get us ridden of dealing with normal and
+		//even Wi. But is this faster? Don't know
 		class BRDF
 		{
 		public:
 			typedef std::shared_ptr<BRDF> ptr;
 
-			virtual void f(const glm::vec3& wi, const glm::vec3& wo, RGBSpectrum& out) const = 0;
+			virtual void f(const glm::vec3& wi, const glm::vec3& wo, const glm::vec3& normal, RGBSpectrum& out) const = 0;
 			virtual std::string str() const { return std::string("[Base BRDF]"); };
 		};
 
@@ -25,7 +30,15 @@ namespace Renderer
 		{
 		public:
 			glm::vec3 color;
-			void f(const glm::vec3& wi, const glm::vec3& wo, RGBSpectrum& out) const override;
+			void f(const glm::vec3& wi, const glm::vec3& wo, const glm::vec3& normal, RGBSpectrum& out) const override;
+			std::string str() const override;
+		};
+
+		class Specular : public BRDF
+		{
+		public:
+			glm::vec3 color; float gamma;
+			void f(const glm::vec3& wi, const glm::vec3& wo, const glm::vec3& normal, RGBSpectrum& out) const override;
 			std::string str() const override;
 		};
 	}

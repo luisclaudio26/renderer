@@ -29,6 +29,19 @@ namespace Renderer
 
 					return BRDF::ptr(lamb);
 				}
+				else if(type.compare("specular") == 0)
+				{
+					Specular *spec = new Specular;
+					nlohmann::json param = in["param"];
+					float r = param["color"][0]; 
+					float g = param["color"][1]; 
+					float b = param["color"][2];
+					
+					spec->color = glm::vec3(r, g, b);
+					spec->gamma = param["gamma"].get<float>();
+					
+					return BRDF::ptr(spec);
+				}
 
 				//TODO: THROW ERROR
 				LogError("Unsupported material.");

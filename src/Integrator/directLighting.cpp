@@ -43,7 +43,7 @@ namespace Renderer
 					l->next_sample(ls_spectrum, wi);
 
 					RGBSpectrum brdf;
-					material->f(wi, wo, brdf);
+					material->f(wi, wo, inter.normal, brdf);
 
 					float cosWiN = glm::max(glm::dot(-wi, inter.normal), 0.0f);
 
