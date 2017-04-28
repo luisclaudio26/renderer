@@ -47,17 +47,21 @@ namespace Renderer
 				}
 				else if(type.compare("meshOBJ") == 0)
 				{
-					MeshOBJ* m = new MeshOBJ;
-
-					std::string err;
 					std::string path = in["shapeParam"]["path"].get<std::string>();
-					tinyobj::LoadObj(&m->attrib, &m->shapes, &m->materials, &err, path.c_str());
+
+					std::vector<tinyobj::shape_t> shapes;
+					std::vector<tinyobj::material_t> materials;
+					std::string err; tinyobj::attrib_t attrib;
+					
+					tinyobj::LoadObj(&attrib, &shapes, &materials, &err, path.c_str());
 
 					if(!err.empty())
 					{
 						std::string e("Error while loading mesh: ");
 						LogError(e + err);
 					}
+
+					MeshOBJ* m = new MeshOBJ(shapes, attrib);
 
 					return Shape::ptr(m);
 				}

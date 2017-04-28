@@ -1,22 +1,32 @@
 #ifndef _MESHOBJ_H_
 #define _MESHOBJ_H_
 
-#include "../geometry.h"
 #include "shape.h"
+#include "../geometry.h"
+#include "../../3rdparty/tiny_obj_loader.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include "../../3rdparty/tiny_obj_loader.h"
 
 namespace Renderer
 {
 	namespace Shapes
 	{
+		typedef struct 
+		{
+			glm::vec3 vertex[3];
+		} TriFace;
+
+		typedef struct
+		{
+			std::vector<TriFace> faces;
+		} ShapeOBJ;
+
 		class MeshOBJ : public Shape
 		{
 		public:
-			tinyobj::attrib_t attrib;
-			std::vector<tinyobj::shape_t> shapes;
-			std::vector<tinyobj::material_t> materials;
+			std::vector<ShapeOBJ> shapes;
+
+			MeshOBJ(const std::vector<tinyobj::shape_t>& shapes, const tinyobj::attrib_t& attrib);
 
 			void intersect(const Geometry::Ray& r, Intersection& out) override;
 
