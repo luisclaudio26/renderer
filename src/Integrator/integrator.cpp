@@ -31,16 +31,6 @@ namespace Renderer
 					Ray r; cam->getRay(u, v, r);
 					Intersection inter; scene->shootCameraRay(r, inter);
 
-					unsigned char c;
-					if(inter.valid) c = 255;
-					else c = 20;
-
-					Pixel255& out = img[ i*cam->hRes + j ];
-					out.r = c;
-					out.g = c;
-					out.b = c;
-
-					/*
 					//TODO: Create a base class Spectrum, which has a
 					//method .rgb()
 					RGBSpectrum p; this->integrate(r, inter, p);
@@ -48,7 +38,6 @@ namespace Renderer
 					out.r = (unsigned char)(p.r*255);
 					out.g = (unsigned char)(p.g*255);
 					out.b = (unsigned char)(p.b*255);
-					*/
 				}
 
 			writePixelsToFile(path.c_str(), cam->hRes, cam->vRes, img);

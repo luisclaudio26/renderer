@@ -10,7 +10,7 @@ namespace Renderer
 	{
 		using namespace Geometry;
 
-		static bool intersectTriangle(const TriFace& tri, const Ray& r, float& t)
+		static bool intersectTriangle(const TriFace& tri, const Ray& r, float& t, glm::vec3& normal)
 		{
 			// Möller-Trumbore algorithm, as described in
 			// https://www.scratchapixel.com/lessons/3d-basic-rendering/
@@ -33,6 +33,7 @@ namespace Renderer
 			if (v < 0 || u + v > 1) return false;
 
 			t = glm::dot(v0v2, qvec) * invDet;
+			normal = glm::cross(v0v1, v0v2);
 
 			return true;
 		}
@@ -106,7 +107,7 @@ namespace Renderer
 						float vy = attrib.vertices[3*v.vertex_index + 1];
 						float vz = attrib.vertices[3*v.vertex_index + 2];
 
-						face.vertex[v_id] = 9.5f*glm::vec3(vx, vy, vz);
+						face.vertex[v_id] = 9.5f*glm::vec3(vx, vy, vz) + glm::vec3(3.0f, -1.0f, 0.0f);
 					}
 
 					this->shapes.back().faces.push_back(face);
@@ -127,13 +128,17 @@ namespace Renderer
 			for(auto s = shapes.begin(); s != shapes.end(); ++s)
 				for(auto f = s->faces.begin(); f != s->faces.end(); ++f)
 				{
-					float t_inter;
-					bool res = intersectTriangle(*f, r, t_inter);
+					float t_inter; glm::vec3 n;
+					bool res = intersectTriangle(*f, r, t_inter, n);
 					
 					if(res && t_inter > 0)
 					{
 						out.valid = true;
-						if( t_inter < out.t ) out.t = t_inter;
+						if( t_inter < out.t ) 
+						{
+							out.normal = glm::normalize(n);
+							out.t = t_inter;
+						}
 					}
 				}
 		}
