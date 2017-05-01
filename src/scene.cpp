@@ -22,5 +22,14 @@ namespace Renderer
 				if(I.valid && I.t < out.t) out = I;
 			}
 		}
+
+		void SceneManager::buildTree()
+		{
+			//gather all triangles in scene
+			//std::vector<TriFace*> tris;
+
+			//build tree
+			//tree.build(tris, 0);
+		}
 	}
 }

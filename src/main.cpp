@@ -22,7 +22,7 @@ using namespace Cameras;
 
 int main()
 {
-	std::fstream in("../data/spheres.json");
+	std::fstream in("../data/spheres.json.bckp");
 	nlohmann::json j;
 	in >> j;
 
@@ -40,6 +40,8 @@ int main()
 		Shape::ptr shape = ShapeFactory::create(*s);
 		scene->addShape(shape);
 	}
+
+	scene->buildTree();
 
 	//lighting
 	nlohmann::json lighting = j["lights"];

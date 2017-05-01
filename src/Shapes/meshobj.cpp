@@ -11,6 +11,7 @@ namespace Renderer
 	{
 		using namespace Geometry;
 
+		/*
 		static bool intersectTriangle(const TriFace& tri, const Ray& r, float& t, glm::vec3& normal)
 		{
 			// Möller-Trumbore algorithm, as described in
@@ -37,7 +38,7 @@ namespace Renderer
 			normal = glm::cross(v0v1, v0v2);
 
 			return true;
-		}
+		} */
 
 		std::string MeshOBJ::str()
 		{
@@ -98,7 +99,7 @@ namespace Renderer
 				for(int f_id = 0; f_id < s.mesh.num_face_vertices.size(); ++f_id)
 				{
 					int f = s.mesh.num_face_vertices[f_id];
-					TriFace face;
+					Triangle face;
 
 					for(int v_id = 0; v_id < f; v_id++)
 					{
@@ -125,26 +126,17 @@ namespace Renderer
 			out.valid = false;
 			out.t = std::numeric_limits<float>::max();
 
-			Lambertian *L = new Lambertian;
-			L->color = glm::vec3(1.0, 0.0, 0.0);
-			out.material = BxDF::BRDF::ptr(L);
-
 			for(auto s = shapes.begin(); s != shapes.end(); ++s)
 				for(auto f = s->faces.begin(); f != s->faces.end(); ++f)
 				{
-					float t_inter; glm::vec3 n;
-					bool res = intersectTriangle(*f, r, t_inter, n);
-					
-					if(res && t_inter > 0)
-					{
-						out.valid = true;
-						if( t_inter < out.t ) 
-						{
-							out.normal = glm::normalize(n);
-							out.t = t_inter;
-						}
-					}
+					Intersection I; f->intersect(r, I);
+					if(I.valid && I.t < out.t) out = I;
 				}
+
+			//TODO: Implement this the proper way (reading material from .mtl file)
+			Lambertian *L = new Lambertian;
+			L->color = glm::vec3(1.0, 0.0, 0.0);
+			out.material = BxDF::BRDF::ptr(L);
 		}
 
 	}

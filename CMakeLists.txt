@@ -12,7 +12,8 @@ file(GLOB SOURCES "src/*.cpp"
 					"src/Lights/*.cpp"
 					"src/Integrator/*.cpp"
 					"src/Spectra/*.cpp"
-					"src/BxDF/*.cpp")
+					"src/BxDF/*.cpp"
+					"src/Primitives/*.cpp")
 
 #Link static libraries
 link_directories(3rdparty)

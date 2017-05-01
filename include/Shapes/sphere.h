@@ -3,6 +3,7 @@
 
 #include "../geometry.h"
 #include "shape.h"
+#include "../Primitives/primSphere.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
@@ -13,8 +14,7 @@ namespace Renderer
 		class Sphere : public Shape
 		{
 		public:
-			double radius;
-			glm::vec4 center;
+			PrimSphere s;
 
 			void intersect(const Geometry::Ray& r, Intersection& out) override;
 

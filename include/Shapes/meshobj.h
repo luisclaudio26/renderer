@@ -3,6 +3,7 @@
 
 #include "shape.h"
 #include "../geometry.h"
+#include "../Primitives/triangle.h"
 #include "../../3rdparty/tiny_obj_loader.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -11,14 +12,9 @@ namespace Renderer
 {
 	namespace Shapes
 	{
-		typedef struct 
-		{
-			glm::vec3 vertex[3];
-		} TriFace;
-
 		typedef struct
 		{
-			std::vector<TriFace> faces;
+			std::vector<Triangle> faces;
 		} ShapeOBJ;
 
 		class MeshOBJ : public Shape

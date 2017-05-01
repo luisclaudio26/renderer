@@ -3,6 +3,7 @@
 
 #include "../geometry.h"
 #include "shape.h"
+#include "../Primitives/primPlane.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
@@ -13,8 +14,7 @@ namespace Renderer
 		class Plane : public Shape
 		{
 		public:
-			glm::vec3 normal;
-			glm::vec4 center;
+			PrimPlane p;
 
 			void intersect(const Geometry::Ray& r, Intersection& out) override;
 

@@ -7,6 +7,7 @@
 #include "Shapes/shape.h"
 #include "Lights/light.h"
 #include "geometry.h"
+#include "kdtree.h"
 
 namespace Renderer
 {
@@ -17,6 +18,9 @@ namespace Renderer
 
 		class SceneManager
 		{
+		private:
+			kdTree tree;
+
 		public:
 			typedef std::shared_ptr<SceneManager> ptr;
 			
@@ -25,6 +29,7 @@ namespace Renderer
 
 			void addLight(const Light::ptr& l);
 			void addShape(const Shape::ptr& s);
+			void buildTree();
 
 			void shootCameraRay(const Geometry::Ray& r, Intersection& out) const;
 		};
