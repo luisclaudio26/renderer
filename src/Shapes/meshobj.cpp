@@ -1,15 +1,41 @@
 #include "../../include/Shapes/meshobj.h"
+#include "../../include/BxDF/bxdf.h"
 #include <glm/gtx/intersect.hpp>
 #include <cmath>
 #include <iostream>
-
-//#define TINYOBJLOADER_IMPLEMENTATION
 
 namespace Renderer
 {
 	namespace Shapes
 	{
 		using namespace Geometry;
+
+		static bool intersectTriangle(const TriFace& tri, const Ray& r, float& t)
+		{
+			// Möller-Trumbore algorithm, as described in
+			// https://www.scratchapixel.com/lessons/3d-basic-rendering/
+			// ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection		
+			glm::vec3 v0v1 = tri.vertex[1] - tri.vertex[0]; 
+			glm::vec3 v0v2 = tri.vertex[2] - tri.vertex[0];
+			glm::vec3 pvec = glm::cross(r.d, v0v2);
+			float det = glm::dot(v0v1, pvec);
+
+			//backface culling
+			if( fabs(det) < 0.00001 ) return false;
+			float invDet = 1 / det;
+
+			glm::vec3 tvec = r.o - tri.vertex[0];
+			float u = glm::dot(tvec, pvec) * invDet;
+			if (u < 0 || u > 1) return false;
+
+			glm::vec3 qvec = glm::cross(tvec, v0v1);
+			float v = glm::dot(r.d, qvec) * invDet;
+			if (v < 0 || u + v > 1) return false;
+
+			t = glm::dot(v0v2, qvec) * invDet;
+
+			return true;
+		}
 
 		std::string MeshOBJ::str()
 		{
@@ -80,7 +106,7 @@ namespace Renderer
 						float vy = attrib.vertices[3*v.vertex_index + 1];
 						float vz = attrib.vertices[3*v.vertex_index + 2];
 
-						face.vertex[v_id] = glm::vec3(vx, vy, vz);
+						face.vertex[v_id] = 9.5f*glm::vec3(vx, vy, vz);
 					}
 
 					this->shapes.back().faces.push_back(face);
@@ -91,22 +117,26 @@ namespace Renderer
 
 		void MeshOBJ::intersect(const Ray& r, Intersection& out)
 		{
+			out.valid = false;
+			out.t = std::numeric_limits<float>::max();
+
+			Lambertian *L = new Lambertian;
+			L->color = glm::vec3(1.0, 0.0, 0.0);
+			out.material = BxDF::BRDF::ptr(L);
+
 			for(auto s = shapes.begin(); s != shapes.end(); ++s)
-			{
 				for(auto f = s->faces.begin(); f != s->faces.end(); ++f)
 				{
-					glm::vec3 inter_coord;
-					bool res = glm::intersectRayTriangle(r.o, r.d, f->vertex[0], 
-														f->vertex[1], f->vertex[2], inter_coord);
-					if(res)
-						std::cout<<(inter_coord[0] - r.o[0])/r.d[0]<<std::endl;
+					float t_inter;
+					bool res = intersectTriangle(*f, r, t_inter);
+					
+					if(res && t_inter > 0)
+					{
+						out.valid = true;
+						if( t_inter < out.t ) out.t = t_inter;
+					}
 				}
-			}
-
-			out.valid = false;
-			return;
 		}
-
 
 	}
 }
