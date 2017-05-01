@@ -15,6 +15,7 @@ namespace Renderer
 			Pixel255* img = new Pixel255[cam->hRes * cam->vRes];
 			memset(img, 0, sizeof(Pixel255) * cam->hRes * cam->vRes);
 
+			#pragma omp parallel for
 			for(int i = 0; i < cam->vRes; ++i)
 				for(int j = 0; j < cam->hRes; ++j)
 				{
@@ -32,7 +33,7 @@ namespace Renderer
 
 					unsigned char c;
 					if(inter.valid) c = 255;
-					else c = 0;
+					else c = 20;
 
 					Pixel255& out = img[ i*cam->hRes + j ];
 					out.r = c;
