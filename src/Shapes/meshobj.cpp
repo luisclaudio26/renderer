@@ -1,6 +1,7 @@
 #include "../../include/Shapes/meshobj.h"
 #include "../../include/BxDF/bxdf.h"
 #include <glm/gtx/intersect.hpp>
+#include <glm/gtx/transform.hpp>
 #include <cmath>
 #include <iostream>
 
@@ -21,7 +22,7 @@ namespace Renderer
 			float det = glm::dot(v0v1, pvec);
 
 			//backface culling
-			if( fabs(det) < 0.00001 ) return false;
+			if( det < 0.0000001 ) return false;
 			float invDet = 1 / det;
 
 			glm::vec3 tvec = r.o - tri.vertex[0];
@@ -107,7 +108,10 @@ namespace Renderer
 						float vy = attrib.vertices[3*v.vertex_index + 1];
 						float vz = attrib.vertices[3*v.vertex_index + 2];
 
-						face.vertex[v_id] = 9.5f*glm::vec3(vx, vy, vz) + glm::vec3(3.0f, -1.0f, 0.0f);
+						glm::mat4 rot = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+						glm::vec4 v_ = rot * glm::vec4(vx, vy, vz, 1.0f);
+
+						face.vertex[v_id] = 9.5f * glm::vec3(v_[0], v_[1], v_[2]) + glm::vec3(2.0f, -1.0f, 0.0f);
 					}
 
 					this->shapes.back().faces.push_back(face);
