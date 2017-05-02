@@ -17,6 +17,7 @@ namespace Renderer
 			Triangle();
 			
 			void intersect(const Ray& r, Intersection& out) override;
+			void defineBBox() override;
 		};
 	}
 }

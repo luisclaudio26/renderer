@@ -17,6 +17,7 @@ namespace Renderer
 			PrimPlane();
 			
 			void intersect(const Ray& r, Intersection& out) override;
+			void defineBBox() override;
 		};
 	}
 }

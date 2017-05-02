@@ -25,11 +25,11 @@ namespace Renderer
 
 		void SceneManager::buildTree()
 		{
-			//gather all triangles in scene
-			//std::vector<TriFace*> tris;
+			//gather all primitives in scene
+			std::vector<Primitive*> prim;
 
 			//build tree
-			//tree.build(tris, 0);
+			tree.build(prim, 0);
 		}
 	}
 }

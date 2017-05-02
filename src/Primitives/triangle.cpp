@@ -16,6 +16,17 @@ namespace Renderer
 			vertex[0] = vertex[1] = vertex[2] = glm::vec3(0,0,0);
 		}
 
+		void Triangle::defineBBox()
+		{
+			bbox.p[0] = glm::min(vertex[0][0], glm::min(vertex[1][0], vertex[3][0]));
+			bbox.p[1] = glm::min(vertex[0][1], glm::min(vertex[1][1], vertex[3][1]));
+			bbox.p[2] = glm::min(vertex[0][2], glm::min(vertex[1][2], vertex[3][2]));
+
+			bbox.q[0] = glm::max(vertex[0][0], glm::max(vertex[1][0], vertex[3][0]));
+			bbox.q[1] = glm::max(vertex[0][1], glm::max(vertex[1][1], vertex[3][1]));
+			bbox.q[2] = glm::max(vertex[0][2], glm::max(vertex[1][2], vertex[3][2]));
+		}
+
 		void Triangle::intersect(const Ray& r, Intersection& out)
 		{
 			out.valid = false;

@@ -4,6 +4,11 @@ namespace Renderer
 {
 	namespace Shapes
 	{
+		void PrimPlane::defineBBox()
+		{
+			
+		}
+		
 		PrimPlane::PrimPlane(glm::vec3 n, glm::vec4 c)
 		{
 			normal = n;

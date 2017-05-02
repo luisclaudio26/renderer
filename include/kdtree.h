@@ -15,10 +15,10 @@ namespace Renderer
 		class kdNode
 		{
 		public:
-			//AABB bbox;
+			AABB bbox;
 			kdNode *r, *l;
 
-			//std::vector<TriFace*> triangles;
+			std::vector<Primitive*> prim;
 		};
 
 		class kdTree
@@ -26,8 +26,8 @@ namespace Renderer
 		public:
 			kdNode root;
 
-			//void build(std::vector<TriFace*>& triangles, int depth);
-			//void closestTriangle(const Ray& r, Intersection& out);
+			void build(const std::vector<Primitive*>& prim, int depth);
+			void intersect(const Ray& r, Intersection& out);
 		};
 	}
 }

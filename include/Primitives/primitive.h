@@ -18,6 +18,9 @@ namespace Renderer
 		class Primitive
 		{
 		public:
+			AABB bbox;
+			
+			virtual void defineBBox() = 0;
 			virtual void intersect(const Ray& r, Intersection& out) = 0;
 		};
 	}
