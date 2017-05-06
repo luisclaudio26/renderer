@@ -10,6 +10,7 @@ namespace Renderer
 	{
 		glm::vec4 vec4FromJSON(const nlohmann::json& in);
 		glm::vec3 vec3FromJSON(const nlohmann::json& in);
+		glm::vec2 vec2FromJSON(const nlohmann::json& in);
 	}
 }
 

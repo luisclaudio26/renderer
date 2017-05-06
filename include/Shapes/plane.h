@@ -1,9 +1,9 @@
 #ifndef _PLANE_H_
 #define _PLANE_H_
 
-#include "../geometry.h"
 #include "shape.h"
-#include "../Primitives/primPlane.h"
+#include "../geometry.h"
+#include "../Primitives/triangle.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
@@ -14,7 +14,8 @@ namespace Renderer
 		class Plane : public Shape
 		{
 		public:
-			PrimPlane p;
+			//Bottom-Left, Upper-Right triangles
+			Triangle bl, ur;
 
 			void intersect(const Geometry::Ray& r, Intersection& out) override;
 

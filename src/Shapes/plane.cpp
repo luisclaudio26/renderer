@@ -12,10 +12,7 @@ namespace Renderer
 		{
 			std::string s("");
 			
-			s += "[Normal: ";
-			s += glm::to_string(this->p.normal);
-			s += ", Center: ";
-			s += glm::to_string(this->p.center);
+			s += "[Plane ";
 			s += ", Material: ";
 			s += this->material->str();
 			s += "]";
@@ -26,12 +23,21 @@ namespace Renderer
 		void Plane::intersect(const Ray& r, Intersection& out)
 		{
 			out.valid = false;
-			Intersection I; p.intersect(r, I);
-			if(I.valid)
-			{
-				out = I;
-				out.material = material;
-			}
+
+			Intersection iBL, iUR;
+			iBL.t = iUR.t = std::numeric_limits<float>::max();
+
+			bl.intersect(r, iBL);
+			ur.intersect(r, iUR);
+
+			//Unless we hit the exact border between two
+			//triangles, we'll never have two intersections.
+			//TODO: this has already happened once, but seemed
+			//to cause no problem
+			if(iBL.valid) out = iBL;
+			else if(iUR.valid) out = iUR;
+			
+			out.material = material;
 		}
 	}
 }
