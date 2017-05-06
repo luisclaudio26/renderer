@@ -8,6 +8,7 @@
 #include "geometry.h"
 
 #include <iostream>
+#include <glm/gtx/string_cast.hpp>
 
 namespace Renderer
 {
@@ -41,22 +42,18 @@ namespace Renderer
 		 	{
 		 		//Don't forget that look-at (r) points to the back of the camera!
 		 		glm::vec3 p, q, r;
-				p = glm::normalize(pos - look);
-				q = glm::normalize(up - glm::dot(up, p)*p);
-				r = glm::cross(p, q);
+
+				r = glm::normalize(look - pos);
+				q = glm::normalize(up - glm::dot(up, r)*r);
+				p = glm::cross(r, q);
 
 				world2cam = glm::mat3(p, q, r);
-				cam2world = glm::transpose(world2cam);
+				cam2world = glm::inverse(world2cam);
 
 				//TODO: FILM CAN'T BE RESIZED AS FUNCTION OF
 				//FILM DISTANCE! It makes us lose the "zooming"
 				//effect of the film plane distance
 				h = 1.0f; w = aspectRatio;
-
-				/*
-				w = 2 * this->d * tan(FOV * 0.5f);
-				h = w / aspectRatio;
-				*/
 		 	}
 
 			void getRay(float u, float v, Geometry::Ray& out);
