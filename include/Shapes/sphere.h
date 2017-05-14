@@ -17,7 +17,8 @@ namespace Renderer
 			PrimSphere s;
 
 			void intersect(const Geometry::Ray& r, Intersection& out) override;
-
+			void getPrimitives(std::vector<Primitive*>& out) override;
+			
 			//-----------------------------
 			//------ Debugging tools ------
 			//-----------------------------

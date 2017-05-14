@@ -20,6 +20,12 @@ namespace Renderer
 			return s;
 		}
 
+		void Plane::getPrimitives(std::vector<Primitive*>& out)
+		{
+			out.push_back(&this->bl);
+			out.push_back(&this->ur);
+		}
+
 		void Plane::intersect(const Ray& r, Intersection& out)
 		{
 			out.valid = false;

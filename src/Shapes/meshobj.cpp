@@ -121,6 +121,13 @@ namespace Renderer
 			}
 		}
 
+		void MeshOBJ::getPrimitives(std::vector<Primitive*>& out)
+		{
+			for(auto s = shapes.begin(); s != shapes.end(); ++s)
+				for(auto t = s->faces.begin(); t != s->faces.end(); ++t)
+					out.push_back( &(*t) );
+		}
+
 		void MeshOBJ::intersect(const Ray& r, Intersection& out)
 		{
 			out.valid = false;

@@ -25,6 +25,7 @@ namespace Renderer
 			MeshOBJ(const std::vector<tinyobj::shape_t>& shapes, const tinyobj::attrib_t& attrib);
 
 			void intersect(const Geometry::Ray& r, Intersection& out) override;
+			void getPrimitives(std::vector<Primitive*>& out) override;
 
 			//-----------------------------
 			//------ Debugging tools ------

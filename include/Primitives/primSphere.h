@@ -9,7 +9,7 @@ namespace Renderer
 	{
 		using namespace Geometry;
 
-		class PrimSphere : Primitive
+		class PrimSphere : public Primitive
 		{
 		public:
 			double radius;

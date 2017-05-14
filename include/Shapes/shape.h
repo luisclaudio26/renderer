@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include "../geometry.h"
 #include "../intersection.h"
 
@@ -10,6 +11,9 @@ namespace Renderer
 {
 	namespace Shapes
 	{
+		//forward declaration, avoiding file inclusion
+		class Primitive;
+
 		class Shape
 		{
 		public:
@@ -18,6 +22,7 @@ namespace Renderer
 			BRDF::ptr material;
 
 			virtual void intersect(const Geometry::Ray& r, Intersection& out) = 0;
+			virtual void getPrimitives(std::vector<Primitive*>& out) = 0;
 
 			//-----------------------------
 			//------ Debugging tools ------

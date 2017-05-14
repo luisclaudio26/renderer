@@ -24,6 +24,11 @@ namespace Renderer
 			return s;
 		}
 
+		void Sphere::getPrimitives(std::vector<Primitive*>& out)
+		{
+			out.push_back(&this->s);
+		}
+
 		void Sphere::intersect(const Ray& r, Intersection& out)
 		{
 			out.valid = false;
