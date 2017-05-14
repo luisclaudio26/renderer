@@ -1,5 +1,6 @@
 #include "../include/scene.h"
 #include <iostream>
+#include <algorithm>
 
 namespace Renderer
 {
@@ -14,12 +15,50 @@ namespace Renderer
 								const Ray& r, float& t)
 		{
 			float d_N = glm::dot(normal, r.d);
-
 			if(fabs(d_N) < 0.00001) return false;
 			
 			t = glm::dot(normal, center - r.o) / d_N;
 			
 			return t >= 0.0f;
+		}
+
+		bool intersectRayBBox(const Ray& r, const AABB& bbox, float& t_min, float& t_max)
+		{
+			//Taken from 
+			//https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
+			//TODO: modify code so it uses max/min, which is faster.
+			float tmin = (bbox.q[0] - r.o[0]) / r.d[0];
+			float tmax = (bbox.p[0] - r.o[0]) / r.d[0];
+
+			if (tmin > tmax) std::swap(tmin, tmax);
+
+			float tymin = (bbox.q[1] - r.o[1]) / r.d[1];
+			float tymax = (bbox.p[1] - r.o[1]) / r.d[1];
+
+			if (tymin > tymax) std::swap(tymin, tymax);
+
+			if ((tmin > tymax) || (tymin > tmax)) return false;
+
+			if (tymin > tmin)
+				tmin = tymin;
+
+			if (tymax < tmax)
+				tmax = tymax;
+
+			float tzmin = (bbox.q[2] - r.o[2]) / r.d[2];
+			float tzmax = (bbox.p[2] - r.o[2]) / r.d[2];
+
+			if (tzmin > tzmax) std::swap(tzmin, tzmax);
+
+			if ((tmin > tzmax) || (tzmin > tmax)) return false;
+
+			if (tzmin > tmin)
+				tmin = tzmin;
+
+			if (tzmax < tmax)
+				tmax = tzmax;
+
+			return true; 
 		}
 
 		bool hit(const kdNode& n, const Ray& r, Intersection& out, int axle = 0)
@@ -45,46 +84,19 @@ namespace Renderer
 			}
 			else
 			{
-				bool testFar = true;
-
-				//Define Near and Far box
-				kdNode *near, *far;
-				if( r.o[axle] < n.split ) {
-					near = n.l; far = n.r;
-				} else {
-					near = n.r; far = n.l; 
-				}
-
-				//Intersect with splitting plane
-				float t_split;
-				glm::vec3 center = n.bbox.q, normal = glm::vec3(0.0f, 0.0f, 0.0f);
-				center[axle] = n.split; normal[axle] = 1.0f;
-
-				//First test: if ray is parallel to split plane, it wont
-				//intersect the Far-box.
-				testFar = !intersectRayPlane(center, normal, r, t_split);
-
-				glm::vec3 inter = r(t_split);
-
-				//Second test: if intersection with split plane is outside
-				//the bounding box, skip far box.
-				for(int i = 0; i < 3; i++)
+				float tmin, tmax;
+				if( intersectRayBBox(r, n.bbox, tmin, tmax) )
 				{
-					if(i == axle) continue;
+					int nextAxle = (axle + 1) % 3;
 
-					if(inter[i] > n.bbox.p[i] || inter[i] < n.bbox.q[i])
-						testFar = false;
+					//intersect with bounding boxes
+					bool hitLeft = hit((*n.l), r, out, nextAxle);
+					bool hitRight = hit(*(n.r), r, out, nextAxle);
+
+					has_hit = hitLeft || hitRight;
 				}
-
-				//We must always test Near-box!
-				int nextAxle = (axle + 1) % 3;
-				has_hit = hit(*near, r, out, nextAxle);
-				
-				//if we had intersection with Near-box,
-				//skip Far-box.
-				if(has_hit) return true;
-
-				if(testFar) has_hit = hit(*far, r, out, nextAxle);
+				else 
+					has_hit = false;
 			}
 
 			return has_hit;
@@ -94,20 +106,15 @@ namespace Renderer
 		{
 			out.t = std::numeric_limits<float>::max();
 			out.valid = false;
-			
-			Lambertian *m = new Lambertian; 
-			m->color = glm::vec3(1.0f, 0.0f, 0.0f);
-			out.material = BRDF::ptr(m);
 
-			hit(tree.root, r, out);
+			bool intersected = hit(tree.root, r, out);
 
-			/*
-			for(auto s = shapes.begin(); s != shapes.end(); ++s)
+			if(intersected)
 			{
-				Intersection I; (*s)->intersect(r, I);
-				if(I.valid && I.t < out.t) out = I;
+				Lambertian *m = new Lambertian; 
+				m->color = glm::vec3(1.0f, 1.0f, 1.0f);
+				out.material = BRDF::ptr(m);
 			}
-			*/
 		}
 
 		void SceneManager::buildTree()

@@ -28,7 +28,7 @@ namespace Renderer
 				n.r = n.l = NULL;
 				n.split = std::numeric_limits<float>::quiet_NaN();
 
-				//std::cout<<"Reached depth 8! Number of primitives: "<<n.prim.size()<<std::endl;
+				//std::cout<<"Reached maximum depth! Number of primitives: "<<n.prim.size()<<std::endl;
 				return;
 			}
 
@@ -42,14 +42,29 @@ namespace Renderer
 			//put primitives in right or left node
 			//TODO: for some reason, not all primitives are being
 			//put in nodes.
+			bool any = false;
 			for(auto m = n.prim.begin(); m != n.prim.end(); ++m)
 			{
 				if( (*m)->bbox.q[axle] < c )
+				{
 					n.l->prim.push_back( *m );
+					any = true;
+				}
 
-				if( (*m)->bbox.p[axle] >= c )
+				if( (*m)->bbox.q[axle] >= c )
+				{
 					n.r->prim.push_back( *m );
+					any = true;
+				}
+
+				//if(!any) std::cout<<"Primitive was sent to neither of the leaves!"<<std::endl;
 			}
+
+			/*
+			std::cout<<"Primitives before: "<<n.prim.size()<<std::endl;
+			std::cout<<"Primitives after: "<<n.l->prim.size()<<" on the left and "<<n.r->prim.size()<<" on the right";
+			std::cout<<" (total = "<<n.l->prim.size()+n.r->prim.size()<<")\n";
+			*/
 
 			//define new bounding boxes
 			n.l->bbox.q = n.bbox.q;
