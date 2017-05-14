@@ -11,10 +11,6 @@ namespace Renderer
 	{
 		using namespace Geometry;
 		
-		typedef struct {
-			glm::vec3 p, q;
-		} AABB;
-
 		class Primitive
 		{
 		public:

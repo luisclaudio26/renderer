@@ -22,7 +22,7 @@ using namespace Cameras;
 
 int main()
 {
-	std::fstream in("../data/spheres.json.bckp");
+	std::fstream in("../data/spheres.json");
 	nlohmann::json j;
 	in >> j;
 

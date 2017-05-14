@@ -9,6 +9,10 @@ namespace Renderer
 {
 	namespace Geometry
 	{
+		typedef struct {
+			glm::vec3 p, q;
+		} AABB;
+
 		class Ray
 		{
 		public:

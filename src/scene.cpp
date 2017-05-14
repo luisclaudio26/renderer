@@ -27,6 +27,8 @@ namespace Renderer
 		{
 			//gather all primitives in scene
 			std::vector<Primitive*> prim;
+			for(auto s = shapes.begin(); s != shapes.end(); ++s)
+				(*s)->getPrimitives(prim);
 
 			//build tree
 			tree.build(prim, 0);

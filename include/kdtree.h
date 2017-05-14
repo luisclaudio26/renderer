@@ -17,6 +17,7 @@ namespace Renderer
 		public:
 			AABB bbox;
 			kdNode *r, *l;
+			float split;
 
 			std::vector<Primitive*> prim;
 		};
