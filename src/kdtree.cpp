@@ -16,7 +16,7 @@ namespace Renderer
 			//is not in fact calculated (we use the q point instead).
 			float sum = 0.0f;
 			for(auto p = prim.begin(); p != prim.end(); ++p)
-				sum += (*p)->bbox.q[axle];
+				sum += ((*p)->bbox.q[axle] + (*p)->bbox.p[axle])*0.5f;
 			return sum / prim.size();
 		}
 
@@ -26,8 +26,6 @@ namespace Renderer
 			if(depth == 8)
 			{
 				n.r = n.l = NULL;
-				n.split = std::numeric_limits<float>::quiet_NaN();
-
 				//std::cout<<"Reached maximum depth! Number of primitives: "<<n.prim.size()<<std::endl;
 				return;
 			}
@@ -42,36 +40,43 @@ namespace Renderer
 			//put primitives in right or left node
 			//TODO: for some reason, not all primitives are being
 			//put in nodes.
-			bool any = false;
 			for(auto m = n.prim.begin(); m != n.prim.end(); ++m)
 			{
-				if( (*m)->bbox.q[axle] < c )
-				{
-					n.l->prim.push_back( *m );
-					any = true;
-				}
-
-				if( (*m)->bbox.q[axle] >= c )
+				float midpoint = ((*m)->bbox.q[axle] + (*m)->bbox.p[axle])*0.5f;
+				
+				if(midpoint >= c)
 				{
 					n.r->prim.push_back( *m );
-					any = true;
+					if((*m)->bbox.q[axle] < c) n.l->prim.push_back( *m );
+				}
+				else
+				{
+					n.l->prim.push_back( *m );
+					if((*m)->bbox.p[axle] >= c) n.r->prim.push_back( *m );
 				}
 
 				//if(!any) std::cout<<"Primitive was sent to neither of the leaves!"<<std::endl;
 			}
 
 			/*
+			std::cout<<"Axis = "<<axle<<std::endl;
 			std::cout<<"Primitives before: "<<n.prim.size()<<std::endl;
 			std::cout<<"Primitives after: "<<n.l->prim.size()<<" on the left and "<<n.r->prim.size()<<" on the right";
 			std::cout<<" (total = "<<n.l->prim.size()+n.r->prim.size()<<")\n";
 			*/
 
-			//define new bounding boxes
-			n.l->bbox.q = n.bbox.q;
-			n.l->bbox.p = n.bbox.p; n.l->bbox.p[axle] = c;
+			/*
+			bool diff = n.prim.size() != n.l->prim.size()+n.r->prim.size();
+			if(diff) std::cout<<"Here!!!"<<std::endl;*/
 
-			n.r->bbox.p = n.bbox.p;
-			n.r->bbox.q = n.bbox.q; n.r->bbox.q[axle] = c;
+			//define new bounding boxes
+			n.l->bbox.q = n.bbox.q; 
+			n.l->bbox.p = n.bbox.p;
+			n.l->bbox.p[axle] = c;
+
+			n.r->bbox.p = n.bbox.p;	
+			n.r->bbox.q = n.bbox.q;
+			n.r->bbox.q[axle] = c;
 
 			/*
 			std::cout<<"First bounding box: "<<std::endl;
@@ -82,15 +87,10 @@ namespace Renderer
 			std::cout<<glm::to_string(n.r->bbox.p)<<", "<<glm::to_string(n.r->bbox.q)<<std::endl;
 			*/
 
-			//define split point for this node
-			n.split = c;
-
 			//recursively build nodes
 			int nextAxle = (axle + 1) % 3;
 			buildNode(*(n.r), depth+1, nextAxle);
 			buildNode(*(n.l), depth+1, nextAxle);
-
-
 
 			/*
 			std::cout<<"Primitive count: "<<n.prim.size()<<std::endl;
@@ -99,7 +99,7 @@ namespace Renderer
 			*/
 		}
 
-		void kdTree::build(const std::vector<Primitive*>& prim, int depth)
+		void kdTree::build(const std::vector<Primitive*>& prim)
 		{
 			this->root.bbox.p = glm::vec3(FLT_MIN, FLT_MIN, FLT_MIN);
 			this->root.bbox.q = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);

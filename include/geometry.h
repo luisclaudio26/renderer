@@ -9,10 +9,6 @@ namespace Renderer
 {
 	namespace Geometry
 	{
-		typedef struct {
-			glm::vec3 p, q;
-		} AABB;
-
 		class Ray
 		{
 		public:
@@ -23,6 +19,11 @@ namespace Renderer
 			glm::vec3 operator()(float t) const { return o + d*t; }
 			Ray operator-() const { return Ray(o, -d); }
 		};
+
+		typedef struct {
+			glm::vec3 p, q;
+			bool intersect(const Ray& r, float& t_min, float& t_max) const;
+		} AABB;
 	}
 }
 

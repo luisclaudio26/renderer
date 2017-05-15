@@ -17,8 +17,6 @@ namespace Renderer
 		public:
 			AABB bbox;
 			kdNode *r, *l;
-			float split;
-
 			std::vector<Primitive*> prim;
 		};
 
@@ -27,7 +25,7 @@ namespace Renderer
 		public:
 			kdNode root;
 
-			void build(const std::vector<Primitive*>& prim, int depth);
+			void build(const std::vector<Primitive*>& prim);
 			void intersect(const Ray& r, Intersection& out);
 		};
 	}
