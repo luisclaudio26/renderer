@@ -14,19 +14,25 @@ namespace Renderer
 		{
 			//not a real centroid, cause centroid of each primitive
 			//is not in fact calculated (we use the q point instead).
+			//TODO: Centroid() is computing NaN splits!
 			float sum = 0.0f;
+			
 			for(auto p = prim.begin(); p != prim.end(); ++p)
-				sum += ((*p)->bbox.q[axle] + (*p)->bbox.p[axle])*0.5f;
+				sum += ((*p)->bbox.min[axle] + (*p)->bbox.max[axle])*0.5f;
+			
+			if(prim.size() == 0)
+				std::cout<<"No primitive to calculate centroid!"<<std::endl;
+
 			return sum / prim.size();
 		}
 
 		void buildNode(kdNode& n, int depth = 0, int axle = 0)
 		{
 			//stopping criterium
-			if(depth == 8)
+			if( depth == 6 )
 			{
 				n.r = n.l = NULL;
-				//std::cout<<"Reached maximum depth! Number of primitives: "<<n.prim.size()<<std::endl;
+				//std::cout<<"Reached leaf: "<<n.prim.size()<<std::endl;
 				return;
 			}
 
@@ -37,28 +43,34 @@ namespace Renderer
 			float c = centroid(n.prim, axle);
 			n.r = new kdNode; n.l = new kdNode;
 
+			//std::cout<<"\nPartitioning on "<<c<<" [axle = "<<axle<<"]\n";
+
 			//put primitives in right or left node
 			//TODO: for some reason, not all primitives are being
 			//put in nodes.
 			for(auto m = n.prim.begin(); m != n.prim.end(); ++m)
 			{
-				float midpoint = ((*m)->bbox.q[axle] + (*m)->bbox.p[axle])*0.5f;
+				//float midpoint = ((*m)->bbox.p[axle] + (*m)->bbox.q[axle])*0.5f;
 				
+				if((*m)->bbox.min[axle] < c) n.l->prim.push_back( *m );
+				if((*m)->bbox.max[axle] > c) n.r->prim.push_back( *m );
+
+				/*
 				if(midpoint >= c)
 				{
 					n.r->prim.push_back( *m );
-					if((*m)->bbox.q[axle] < c) n.l->prim.push_back( *m );
+					if((*m)->bbox.p[axle] < c) n.l->prim.push_back( *m );
 				}
 				else
 				{
 					n.l->prim.push_back( *m );
-					if((*m)->bbox.p[axle] >= c) n.r->prim.push_back( *m );
-				}
+					if((*m)->bbox.q[axle] >= c) n.r->prim.push_back( *m );
+				}*/
 
 				//if(!any) std::cout<<"Primitive was sent to neither of the leaves!"<<std::endl;
 			}
 
-			/*
+			/*			
 			std::cout<<"Axis = "<<axle<<std::endl;
 			std::cout<<"Primitives before: "<<n.prim.size()<<std::endl;
 			std::cout<<"Primitives after: "<<n.l->prim.size()<<" on the left and "<<n.r->prim.size()<<" on the right";
@@ -70,13 +82,13 @@ namespace Renderer
 			if(diff) std::cout<<"Here!!!"<<std::endl;*/
 
 			//define new bounding boxes
-			n.l->bbox.q = n.bbox.q; 
-			n.l->bbox.p = n.bbox.p;
-			n.l->bbox.p[axle] = c;
+			n.l->bbox.min = n.bbox.min; 
+			n.l->bbox.max = n.bbox.max;
+			n.l->bbox.max[axle] = c;
 
-			n.r->bbox.p = n.bbox.p;	
-			n.r->bbox.q = n.bbox.q;
-			n.r->bbox.q[axle] = c;
+			n.r->bbox.min = n.bbox.min;	
+			n.r->bbox.max = n.bbox.max;
+			n.r->bbox.min[axle] = c;
 
 			/*
 			std::cout<<"First bounding box: "<<std::endl;
@@ -101,8 +113,8 @@ namespace Renderer
 
 		void kdTree::build(const std::vector<Primitive*>& prim)
 		{
-			this->root.bbox.p = glm::vec3(FLT_MIN, FLT_MIN, FLT_MIN);
-			this->root.bbox.q = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+			this->root.bbox.max = glm::vec3(FLT_MIN, FLT_MIN, FLT_MIN);
+			this->root.bbox.min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
 
 			//find bounding box for the whole scene
 			for(auto r = prim.begin(); r != prim.end(); ++r)
@@ -110,10 +122,12 @@ namespace Renderer
 				(*r)->defineBBox();
 				for(int i = 0; i < 3; i++)
 				{
-					this->root.bbox.p[i] = glm::max(this->root.bbox.p[i], (*r)->bbox.p[i]);
-					this->root.bbox.q[i] = glm::min(this->root.bbox.q[i], (*r)->bbox.q[i]);
+					this->root.bbox.max[i] = glm::max(this->root.bbox.max[i], (*r)->bbox.max[i]);
+					this->root.bbox.min[i] = glm::min(this->root.bbox.min[i], (*r)->bbox.min[i]);
 				}
 			}
+
+			std::cout<<"Bounding box: "<<glm::to_string(root.bbox.min)<<"\t"<<glm::to_string(root.bbox.max)<<std::endl;
 
 			//launch kd tree building method for root node
 			this->root.prim = prim; //TODO: how to avoid copies?!

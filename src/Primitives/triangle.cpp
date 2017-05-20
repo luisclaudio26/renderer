@@ -26,13 +26,13 @@ namespace Renderer
 
 		void Triangle::defineBBox()
 		{
-			bbox.p[0] = glm::min(vertex[0][0], glm::min(vertex[1][0], vertex[2][0]));
-			bbox.p[1] = glm::min(vertex[0][1], glm::min(vertex[1][1], vertex[2][1]));
-			bbox.p[2] = glm::min(vertex[0][2], glm::min(vertex[1][2], vertex[2][2]));
+			bbox.min[0] = glm::min(vertex[0][0], glm::min(vertex[1][0], vertex[2][0]));
+			bbox.min[1] = glm::min(vertex[0][1], glm::min(vertex[1][1], vertex[2][1]));
+			bbox.min[2] = glm::min(vertex[0][2], glm::min(vertex[1][2], vertex[2][2]));
 
-			bbox.q[0] = glm::max(vertex[0][0], glm::max(vertex[1][0], vertex[2][0]));
-			bbox.q[1] = glm::max(vertex[0][1], glm::max(vertex[1][1], vertex[2][1]));
-			bbox.q[2] = glm::max(vertex[0][2], glm::max(vertex[1][2], vertex[2][2]));
+			bbox.max[0] = glm::max(vertex[0][0], glm::max(vertex[1][0], vertex[2][0]));
+			bbox.max[1] = glm::max(vertex[0][1], glm::max(vertex[1][1], vertex[2][1]));
+			bbox.max[2] = glm::max(vertex[0][2], glm::max(vertex[1][2], vertex[2][2]));
 		}
 
 		void Triangle::intersect(const Ray& r, Intersection& out)

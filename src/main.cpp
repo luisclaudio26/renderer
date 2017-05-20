@@ -22,7 +22,7 @@ using namespace Cameras;
 
 int main()
 {
-	std::fstream in("../data/spheres.json");
+	std::fstream in("../data/mesh.json");
 	nlohmann::json j;
 	in >> j;
 

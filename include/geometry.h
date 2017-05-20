@@ -21,7 +21,7 @@ namespace Renderer
 		};
 
 		typedef struct {
-			glm::vec3 p, q;
+			glm::vec3 min, max;
 			bool intersect(const Ray& r, float& t_min, float& t_max) const;
 		} AABB;
 	}

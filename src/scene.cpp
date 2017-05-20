@@ -11,43 +11,29 @@ namespace Renderer
 		void SceneManager::addLight(const Light::ptr& l) { this->lights.push_back(l); }
 		void SceneManager::addShape(const Shape::ptr& s) { this->shapes.push_back(s); }
 
-		bool hit(const kdNode& n, const Ray& r, Intersection& out)
+		void hit(const kdNode& n, const Ray& r, Intersection& out)
 		{
 			//assumes out.t = Infinity and out.valid = false
 			//in the first call
-			bool has_hit = false;
-
-			//If we reached a leaf...
-			if( n.r == NULL && n.l == NULL )
+			float tmin, tmax;
+			if( n.bbox.intersect(r, tmin, tmax) )
 			{
-				for(auto p = n.prim.begin(); p != n.prim.end(); ++p)
+				//If we reached a leaf...
+				if( n.r == NULL && n.l == NULL )
 				{
-					//TODO: Primitives do not their own material!
-					//must fix this.
-					Intersection I; (*p)->intersect(r, I);
-					if(I.valid && I.t < out.t)
+					for(auto p = n.prim.begin(); p != n.prim.end(); ++p)
 					{
-						out = I;
-						has_hit = true;
+						Intersection I; (*p)->intersect(r, I);
+						if(I.valid && I.t < out.t) out = I;
 					}
 				}
-			}
-			else
-			{
-				float tmin, tmax;
-				if( n.bbox.intersect(r, tmin, tmax) )
+				else
 				{
 					//intersect with bounding boxes
-					bool hitLeft = hit((*n.l), r, out);
-					bool hitRight = hit(*(n.r), r, out);
-
-					has_hit = hitLeft || hitRight;
+					hit((*n.l), r, out);
+					hit(*(n.r), r, out);
 				}
-				else 
-					has_hit = false;
 			}
-
-			return has_hit;
 		}
 
 		void SceneManager::shootCameraRay(const Ray& r, Intersection& out) const
@@ -55,14 +41,7 @@ namespace Renderer
 			out.t = std::numeric_limits<float>::max();
 			out.valid = false;
 
-			bool intersected = hit(tree.root, r, out);
-
-			if(intersected)
-			{
-				Lambertian *m = new Lambertian; 
-				m->color = glm::vec3(1.0f, 0.0f, 0.0f);
-				out.material = BRDF::ptr(m);
-			}
+			hit(tree.root, r, out);
 		}
 
 		void SceneManager::buildTree()

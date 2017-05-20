@@ -9,13 +9,13 @@ namespace Renderer
 			//Taken from 
 			//https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
 			//TODO: modify code so it uses max/min, which is faster.
-			float tmin = (q[0] - r.o[0]) / r.d[0];
-			float tmax = (p[0] - r.o[0]) / r.d[0];
+			float tmin = (min[0] - r.o[0]) / r.d[0];
+			float tmax = (max[0] - r.o[0]) / r.d[0];
 
 			if (tmin > tmax) std::swap(tmin, tmax);
 
-			float tymin = (q[1] - r.o[1]) / r.d[1];
-			float tymax = (p[1] - r.o[1]) / r.d[1];
+			float tymin = (min[1] - r.o[1]) / r.d[1];
+			float tymax = (max[1] - r.o[1]) / r.d[1];
 
 			if (tymin > tymax) std::swap(tymin, tymax);
 
@@ -27,8 +27,8 @@ namespace Renderer
 			if (tymax < tmax)
 				tmax = tymax;
 
-			float tzmin = (q[2] - r.o[2]) / r.d[2];
-			float tzmax = (p[2] - r.o[2]) / r.d[2];
+			float tzmin = (min[2] - r.o[2]) / r.d[2];
+			float tzmax = (max[2] - r.o[2]) / r.d[2];
 
 			if (tzmin > tzmax) std::swap(tzmin, tzmax);
 

@@ -9,8 +9,8 @@ namespace Renderer
 		void PrimSphere::defineBBox()
 		{
 			//this is not the tightest bounding box
-			bbox.p = glm::vec3(center[0]+radius, center[1]+radius, center[2]+radius);
-			bbox.q = glm::vec3(center[0]-radius, center[1]-radius, center[2]-radius);
+			bbox.max = glm::vec3(center[0]+radius, center[1]+radius, center[2]+radius);
+			bbox.min = glm::vec3(center[0]-radius, center[1]-radius, center[2]-radius);
 		}
 
 		void PrimSphere::intersect(const Ray& r, Intersection& out)
