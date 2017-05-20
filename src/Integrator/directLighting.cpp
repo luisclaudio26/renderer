@@ -53,6 +53,7 @@ namespace Renderer
 				}
 			}
 
+			//Not sure this is corrects
 			const int n = this->scene->lights.size();
 			out.r /= n;
 			out.g /= n;

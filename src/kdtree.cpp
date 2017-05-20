@@ -29,7 +29,7 @@ namespace Renderer
 		void buildNode(kdNode& n, int depth = 0, int axle = 0)
 		{
 			//stopping criterium
-			if( depth == 6 )
+			if( n.prim.size() < 10 || depth == 6 )
 			{
 				n.r = n.l = NULL;
 				//std::cout<<"Reached leaf: "<<n.prim.size()<<std::endl;

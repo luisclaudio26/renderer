@@ -110,9 +110,9 @@ namespace Renderer
 						float vy = attrib.vertices[3*v.vertex_index + 1];
 						float vz = attrib.vertices[3*v.vertex_index + 2];
 
-						glm::mat4 rot = glm::rotate(glm::mat4(1.0f), 0.98f, glm::vec3(0.0f, 1.0f, 1.0f));
+						glm::mat4 rot = glm::rotate(glm::mat4(1.0f), -0.97f, glm::vec3(0.0f, 1.0f, 1.0f));
 						glm::vec4 v_ = rot * glm::vec4(vx, vy, vz, 1.0f);
-
+						
 						face.vertex[v_id] = glm::vec3(v_[0], v_[1], v_[2]);
 					}
 

@@ -11,7 +11,7 @@ namespace Renderer
 			vertex[2] = v3;
 
 			Lambertian *lamb = new Lambertian;
-			lamb->color = glm::vec3(0.0f, 1.0f, 0.0f);
+			lamb->color = glm::vec3(1.0f, 1.0f, 1.0f);
 			this->material = BRDF::ptr(lamb);
 		}
 
@@ -20,7 +20,7 @@ namespace Renderer
 			vertex[0] = vertex[1] = vertex[2] = glm::vec3(0,0,0);
 
 			Lambertian *lamb = new Lambertian;
-			lamb->color = glm::vec3(0.0f, 1.0f, 0.0f);
+			lamb->color = glm::vec3(1.0f, 1.0f, 1.0f);
 			this->material = BRDF::ptr(lamb);
 		}
 
