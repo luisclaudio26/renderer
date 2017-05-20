@@ -28,7 +28,7 @@ namespace Renderer
 									const Intersection& inter, RGBSpectrum& out) const = 0;
 
 		public:
-			typedef std::unique_ptr<Integrator> ptr;
+			typedef std::shared_ptr<Integrator> ptr;
 
 			void addCamera(const Camera::ptr& c);
 			void addScene(const SceneManager::ptr& s);

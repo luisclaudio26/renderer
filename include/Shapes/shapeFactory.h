@@ -31,7 +31,7 @@ namespace Renderer
 					s->s.radius = in["shapeParam"]["radius"].get<double>();
 					s->s.center = JSONHelper::vec4FromJSON( in["pos"] );
 
-					s->material = mat;
+					s->s.material = mat;
 
 					return Shape::ptr(s);
 				}
@@ -53,7 +53,7 @@ namespace Renderer
 
 					p->bl.vertex[0] = v0; p->bl.vertex[1] = v1; p->bl.vertex[2] = v3;					
 					p->ur.vertex[0] = v1; p->ur.vertex[1] = v2; p->ur.vertex[2] = v3;
-					p->material = mat;
+					p->ur.material = p->bl.material = mat;
 
 					return Shape::ptr(p);
 				}

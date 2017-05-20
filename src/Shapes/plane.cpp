@@ -12,10 +12,7 @@ namespace Renderer
 		{
 			std::string s("");
 			
-			s += "[Plane ";
-			s += ", Material: ";
-			s += this->material->str();
-			s += "]";
+			s += "[Plane]";
 
 			return s;
 		}
@@ -42,8 +39,6 @@ namespace Renderer
 			//to cause no problem
 			if(iBL.valid) out = iBL;
 			else if(iUR.valid) out = iUR;
-			
-			out.material = material;
 		}
 	}
 }

@@ -45,6 +45,7 @@ namespace Renderer
 				out.valid = true;
 				out.t = t1;
 				out.normal = glm::normalize( r(t1) - center );
+				out.material = this->material;
 
 				return;
 			}
@@ -54,6 +55,7 @@ namespace Renderer
 				out.valid = true;
 				out.t = t2;
 				out.normal = glm::normalize( r(t2) - center );
+				out.material = this->material;
 
 				return;
 			}

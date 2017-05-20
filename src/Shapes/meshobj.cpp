@@ -101,6 +101,7 @@ namespace Renderer
 					int f = s.mesh.num_face_vertices[f_id];
 					Triangle face;
 
+					//define geometry
 					for(int v_id = 0; v_id < f; v_id++)
 					{
 						tinyobj::index_t v = s.mesh.indices[attrib_offset + v_id];
@@ -109,10 +110,10 @@ namespace Renderer
 						float vy = attrib.vertices[3*v.vertex_index + 1];
 						float vz = attrib.vertices[3*v.vertex_index + 2];
 
-						glm::mat4 rot = glm::rotate(glm::mat4(1.0f), 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+						glm::mat4 rot = glm::rotate(glm::mat4(1.0f), 0.96f, glm::vec3(0.0f, 1.0f, 0.0f));
 						glm::vec4 v_ = rot * glm::vec4(vx, vy, vz, 1.0f);
 
-						face.vertex[v_id] = 9.5f * glm::vec3(v_[0], v_[1], v_[2]) + glm::vec3(2.0f, -1.0f, 0.0f);
+						face.vertex[v_id] = glm::vec3(v_[0], v_[1], v_[2]);
 					}
 
 					this->shapes.back().faces.push_back(face);
@@ -141,9 +142,11 @@ namespace Renderer
 				}
 
 			//TODO: Implement this the proper way (reading material from .mtl file)
+			/*
 			Lambertian *L = new Lambertian;
 			L->color = glm::vec3(1.0, 0.0, 0.0);
 			out.material = BxDF::BRDF::ptr(L);
+			*/
 		}
 
 	}

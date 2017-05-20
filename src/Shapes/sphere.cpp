@@ -17,8 +17,6 @@ namespace Renderer
 			s += std::to_string(this->s.radius);
 			s += ", Center: ";
 			s += glm::to_string(this->s.center);
-			s += ", Material: ";
-			s += this->material->str();
 			s += "]";
 
 			return s;
@@ -34,11 +32,7 @@ namespace Renderer
 			out.valid = false;
 			
 			Intersection I; s.intersect(r, I);
-			if(I.valid)
-			{
-				out = I;
-				out.material = material;
-			}
+			if(I.valid) out = I;
 			
 			/*
 			//I don't know where to move this.

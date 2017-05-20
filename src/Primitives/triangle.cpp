@@ -9,11 +9,19 @@ namespace Renderer
 			vertex[0] = v1;
 			vertex[1] = v2;
 			vertex[2] = v3;
+
+			Lambertian *lamb = new Lambertian;
+			lamb->color = glm::vec3(0.0f, 1.0f, 0.0f);
+			this->material = BRDF::ptr(lamb);
 		}
 
 		Triangle::Triangle()
 		{
 			vertex[0] = vertex[1] = vertex[2] = glm::vec3(0,0,0);
+
+			Lambertian *lamb = new Lambertian;
+			lamb->color = glm::vec3(0.0f, 1.0f, 0.0f);
+			this->material = BRDF::ptr(lamb);
 		}
 
 		void Triangle::defineBBox()
@@ -51,9 +59,10 @@ namespace Renderer
 			float v = glm::dot(r.d, qvec) * invDet;
 			if (v < 0 || u + v > 1) return;
 
+			out.valid = true;
 			out.t = glm::dot(v0v2, qvec) * invDet;
 			out.normal = glm::cross(v0v1, v0v2);
-			out.valid = true;
+			out.material = this->material;
 		}
 	}
 }

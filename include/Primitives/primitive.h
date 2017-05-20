@@ -15,6 +15,7 @@ namespace Renderer
 		{
 		public:
 			AABB bbox;
+			BRDF::ptr material;
 			
 			virtual void defineBBox() = 0;
 			virtual void intersect(const Ray& r, Intersection& out) = 0;

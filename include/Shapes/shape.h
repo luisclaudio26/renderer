@@ -19,7 +19,7 @@ namespace Renderer
 		public:
 			typedef std::shared_ptr<Shape> ptr;
 
-			BRDF::ptr material;
+			//BRDF::ptr material;
 
 			virtual void intersect(const Geometry::Ray& r, Intersection& out) = 0;
 			virtual void getPrimitives(std::vector<Primitive*>& out) = 0;
