@@ -53,7 +53,7 @@ namespace Renderer
 
 			out.valid = true;
 			out.t = glm::dot(v0v2, qvec) * invDet;
-			out.normal = glm::cross(v0v1, v0v2);
+			out.normal = glm::normalize(glm::cross(v0v1, v0v2));
 			out.material = this->material;
 		}
 

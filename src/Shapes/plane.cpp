@@ -38,6 +38,7 @@ namespace Renderer
 
 			Intersection iBL, iUR;
 			iBL.t = iUR.t = std::numeric_limits<float>::max();
+			iBL.valid = iUR.valid = false;
 
 			bl.intersect(r, iBL);
 			ur.intersect(r, iUR);

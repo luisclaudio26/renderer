@@ -23,6 +23,7 @@ namespace Renderer
 
 			static glm::mat4 parseTransformations(const nlohmann::json& in)
 			{
+				glm::mat4 out(1.0f);
 				glm::mat4 scl(1.0f), rot(1.0f), trans(1.0f);
 
 				if( in.find("scale") != in.end() )
@@ -43,7 +44,18 @@ namespace Renderer
 					trans = glm::translate(trans_v);
 				}
 
-				return scl * rot * trans;
+				std::string order = in["order"].get<std::string>();
+				for(auto t = order.begin(); t != order.end(); ++t)
+				{
+					if(*t == 't' || *t == 'T')
+						out = trans * out;
+					if(*t == 'r' || *t == 'R')
+						out = rot * out;
+					if(*t == 's' || *t == 'S')
+						out = scl * out;
+				}
+
+				return out;
 			}
 
 			static Shape::ptr create(const nlohmann::json& in)
@@ -81,7 +93,8 @@ namespace Renderer
 
 					p->bl.vertex[0] = v0; p->bl.vertex[1] = v1; p->bl.vertex[2] = v3;					
 					p->ur.vertex[0] = v1; p->ur.vertex[1] = v2; p->ur.vertex[2] = v3;
-					p->ur.material = p->bl.material = mat;
+					p->ur.material = mat;
+					p->bl.material = mat;
 					p->model2world = model2world;
 
 					return Shape::ptr(p);

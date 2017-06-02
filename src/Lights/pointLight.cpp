@@ -15,7 +15,7 @@ namespace Renderer
 		{
 			this->n_remaining_samples = n_samples;
 			this->wi.o = glm::vec3(this->pos);
-			this->wi.d = p - this->wi.o;
+			this->wi.d = glm::normalize(p - this->wi.o);
 
 			//light distance, used to compute falloff
 			float d = glm::length(p - this->wi.o);
