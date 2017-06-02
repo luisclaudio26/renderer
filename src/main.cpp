@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <chrono>
 
 #include "../3rdparty/json.hpp"
 #include "../include/camera.h"
@@ -19,14 +20,13 @@ using namespace Shapes;
 using namespace Lighting;
 using namespace Integration;
 using namespace Cameras;
+using namespace std::chrono;
 
 int main()
 {
 	std::fstream in("../data/mesh.json");
 	nlohmann::json j;
 	in >> j;
-
-	std::cout<<"Loading scene data...";
 
 	Integrator::ptr renderer = IntegratorFactory::create( j["integrator"] );
 	Scene::SceneManager::ptr scene(new Scene::SceneManager); renderer->addScene(scene);
@@ -53,11 +53,13 @@ int main()
 		scene->addLight(light);
 	}
 
-	std::cout<<"done.\nRendering...";
 
+	high_resolution_clock::time_point tS = high_resolution_clock::now();
 	renderer->render("../output/out.ppm");
+	high_resolution_clock::time_point tE = high_resolution_clock::now();
 
-	std::cout<<"done.\n";
+	duration<double> time_span = duration_cast<duration<double>>(tE - tS);
+	std::cout<<"Rendered in "<<time_span.count()<<" s"<<std::endl;
 
 	return 0;
 }

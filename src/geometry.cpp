@@ -1,4 +1,5 @@
 #include "../include/geometry.h"
+#include <iostream>
 
 namespace Renderer
 {
@@ -41,6 +42,21 @@ namespace Renderer
 				tmax = tzmax;
 
 			return true; 
+		}
+
+		int AABB::maximumExtent() const
+		{
+			double longestAxis = 0;
+			double longestExtent = this->max[0] - this->min[0];
+
+			for(int i = 0; i < 3; i++)
+				if( this->max[i] - this->min[i] > longestExtent )
+				{
+					longestAxis = i;
+					longestExtent = this->max[i] - this->min[i];
+				}
+
+			return longestAxis;
 		}
 	}
 }
