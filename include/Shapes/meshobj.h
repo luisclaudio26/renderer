@@ -25,8 +25,8 @@ namespace Renderer
 		public:
 			std::vector<ShapeOBJ> shapes;
 
-			MeshOBJ(const std::vector<tinyobj::shape_t>& shapes, const tinyobj::attrib_t& attrib);
-
+			void setGeometryData(const std::vector<tinyobj::shape_t>& shapes, const tinyobj::attrib_t& attrib,
+									const BRDF::ptr material, const glm::mat4 model2world);
 			void intersect(const Geometry::Ray& r, Intersection& out) override;
 			void getPrimitives(std::vector<Primitive*>& out) override;
 

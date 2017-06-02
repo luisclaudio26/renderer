@@ -33,8 +33,12 @@ namespace Renderer
 			return out + "}\n";
 		}
 
-		MeshOBJ::MeshOBJ(const std::vector<tinyobj::shape_t>& shapes, const tinyobj::attrib_t& attrib)
+		void MeshOBJ::setGeometryData(const std::vector<tinyobj::shape_t>& shapes, const tinyobj::attrib_t& attrib,
+										const BRDF::ptr material, const glm::mat4 model2world)
 		{
+			this->model2world = model2world;
+			this->material = material;
+
 			for(int s_id = 0; s_id < shapes.size(); ++s_id)
 			{
 				//create a new shape at the tail
@@ -48,7 +52,6 @@ namespace Renderer
 					int f = s.mesh.num_face_vertices[f_id];
 					Triangle face;
 
-					//define geometry
 					for(int v_id = 0; v_id < f; v_id++)
 					{
 						tinyobj::index_t v = s.mesh.indices[attrib_offset + v_id];
@@ -57,15 +60,15 @@ namespace Renderer
 						float vy = attrib.vertices[3*v.vertex_index + 1];
 						float vz = attrib.vertices[3*v.vertex_index + 2];
 						
-						face.vertex[v_id] = glm::vec3(vx, vy, vz);
+						face.vertex[v_id] = glm::vec3(model2world * glm::vec4(vx, vy, vz, 1.0f));
 					}
+
+					face.material = this->material;
 
 					this->shapes.back().faces.push_back(face);
 					attrib_offset += f;
 				}
 			}
-
-			this->transformed = false;
 		}
 
 		void MeshOBJ::getPrimitives(std::vector<Primitive*>& out)
@@ -73,14 +76,7 @@ namespace Renderer
 			//Transform primitives if they were not transformed yet
 			for(auto s = shapes.begin(); s != shapes.end(); ++s)
 				for(auto t = s->faces.begin(); t != s->faces.end(); ++t)
-				{
-					if(!transformed)
-						(*t) = (*t) * this->model2world;
-
 					out.push_back( &(*t) );
-				}
-
-			transformed = true;
 		}
 
 		void MeshOBJ::intersect(const Ray& r, Intersection& out)

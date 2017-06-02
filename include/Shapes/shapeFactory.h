@@ -102,13 +102,12 @@ namespace Renderer
 						LogError(e + err);
 					}
 
-					MeshOBJ* m = new MeshOBJ(shapes, attrib);
-					m->model2world = model2world;
+					MeshOBJ* m = new MeshOBJ;
+					m->setGeometryData(shapes, attrib, mat, model2world);
 
 					return Shape::ptr(m);
 				}
 
-				//TODO: THROW ERROR
 				LogError("Unsupported shape.");
 			}
 		};

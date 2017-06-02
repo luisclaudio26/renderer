@@ -9,19 +9,11 @@ namespace Renderer
 			vertex[0] = v1;
 			vertex[1] = v2;
 			vertex[2] = v3;
-
-			Lambertian *lamb = new Lambertian;
-			lamb->color = glm::vec3(1.0f, 1.0f, 1.0f);
-			this->material = BRDF::ptr(lamb);
 		}
 
 		Triangle::Triangle()
 		{
 			vertex[0] = vertex[1] = vertex[2] = glm::vec3(0,0,0);
-
-			Lambertian *lamb = new Lambertian;
-			lamb->color = glm::vec3(1.0f, 1.0f, 1.0f);
-			this->material = BRDF::ptr(lamb);
 		}
 
 		void Triangle::defineBBox()
