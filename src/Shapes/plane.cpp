@@ -19,6 +19,15 @@ namespace Renderer
 
 		void Plane::getPrimitives(std::vector<Primitive*>& out)
 		{
+			//Transform primitives before returning them
+			//TODO: is there a better to do this?
+			if(!transformed)
+			{
+				this->bl = this->bl * this->model2world;
+				this->ur = this->ur * this->model2world;
+				transformed = true;
+			}
+
 			out.push_back(&this->bl);
 			out.push_back(&this->ur);
 		}

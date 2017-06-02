@@ -19,6 +19,9 @@ namespace Renderer
 
 		class MeshOBJ : public Shape
 		{
+		private:
+			bool transformed;
+			
 		public:
 			std::vector<ShapeOBJ> shapes;
 

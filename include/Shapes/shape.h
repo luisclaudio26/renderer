@@ -18,6 +18,7 @@ namespace Renderer
 		{
 		public:
 			typedef std::shared_ptr<Shape> ptr;
+			glm::mat4 model2world;
 
 			//BRDF::ptr material;
 

@@ -20,7 +20,7 @@ namespace Renderer
 			//will allow environment maps and stuff alike, it will be useful.
 			if(!inter.valid)
 			{
-				out = RGBSpectrum::black();
+				out = RGBSpectrum(0.1f, 0.1f, 0.1f);
 				return;
 			}
 

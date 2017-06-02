@@ -18,6 +18,8 @@ namespace Renderer
 			
 			void intersect(const Ray& r, Intersection& out) override;
 			void defineBBox() override;
+
+			Triangle& operator*(const glm::mat4& T);
 		};
 	}
 }

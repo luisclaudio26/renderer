@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <iostream>
+#include <glm/gtx/transform.hpp>
 
 #include "../../3rdparty/tiny_obj_loader.h"
 #include "../error.h"
@@ -20,10 +21,36 @@ namespace Renderer
 		{
 		public:
 
+			static glm::mat4 parseTransformations(const nlohmann::json& in)
+			{
+				glm::mat4 scl(1.0f), rot(1.0f), trans(1.0f);
+
+				if( in.find("scale") != in.end() )
+				{
+					glm::vec3 scl_v = JSONHelper::vec3FromJSON( in["scale"] );
+					scl = glm::scale(scl_v);
+				}
+
+				if( in.find("rotate") != in.end() )
+				{
+					glm::vec4 rot_v = JSONHelper::vec4FromJSON( in["rotate"] );
+					rot = glm::rotate(rot_v[3], glm::vec3(rot_v));
+				}
+
+				if( in.find("translate") != in.end() )
+				{
+					glm::vec3 trans_v = JSONHelper::vec3FromJSON( in["translate"] );
+					trans = glm::translate(trans_v);
+				}
+
+				return scl * rot * trans;
+			}
+
 			static Shape::ptr create(const nlohmann::json& in)
 			{
 				std::string type = in["shape"].get<std::string>();
 				BRDF::ptr mat = BxDFFactory::create( in["material"] );
+				glm::mat4 model2world = ShapeFactory::parseTransformations( in["transformation"] );
 
 				if(type.compare("sphere") == 0)
 				{
@@ -32,6 +59,7 @@ namespace Renderer
 					s->s.center = JSONHelper::vec4FromJSON( in["pos"] );
 
 					s->s.material = mat;
+					s->model2world = model2world;
 
 					return Shape::ptr(s);
 				}
@@ -54,6 +82,7 @@ namespace Renderer
 					p->bl.vertex[0] = v0; p->bl.vertex[1] = v1; p->bl.vertex[2] = v3;					
 					p->ur.vertex[0] = v1; p->ur.vertex[1] = v2; p->ur.vertex[2] = v3;
 					p->ur.material = p->bl.material = mat;
+					p->model2world = model2world;
 
 					return Shape::ptr(p);
 				}
@@ -74,6 +103,7 @@ namespace Renderer
 					}
 
 					MeshOBJ* m = new MeshOBJ(shapes, attrib);
+					m->model2world = model2world;
 
 					return Shape::ptr(m);
 				}

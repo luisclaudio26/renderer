@@ -64,5 +64,19 @@ namespace Renderer
 			out.normal = glm::cross(v0v1, v0v2);
 			out.material = this->material;
 		}
+
+		Triangle& Triangle::operator*(const glm::mat4& T)
+		{
+			for(int i = 0; i < 3; i++)
+			{
+				glm::vec4 v = glm::vec4(this->vertex[i][0],
+										this->vertex[i][1],
+										this->vertex[i][2],
+										1.0f);
+				this->vertex[i] = glm::vec3(T * v);
+			}
+
+			return *this;
+		}
 	}
 }

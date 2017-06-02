@@ -13,10 +13,14 @@ namespace Renderer
 	{
 		class Plane : public Shape
 		{
+		private:
+			bool transformed;
+
 		public:
 			//Bottom-Left, Upper-Right triangles
 			Triangle bl, ur;
 
+			Plane():transformed(false) {}
 			void intersect(const Geometry::Ray& r, Intersection& out) override;
 			void getPrimitives(std::vector<Primitive*>& out) override;
 

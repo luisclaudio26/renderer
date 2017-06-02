@@ -26,6 +26,8 @@ int main()
 	nlohmann::json j;
 	in >> j;
 
+	std::cout<<"Loading scene data...";
+
 	Integrator::ptr renderer = IntegratorFactory::create( j["integrator"] );
 	Scene::SceneManager::ptr scene(new Scene::SceneManager); renderer->addScene(scene);
 
@@ -51,7 +53,11 @@ int main()
 		scene->addLight(light);
 	}
 
+	std::cout<<"done.\nRendering...";
+
 	renderer->render("../output/out.ppm");
+
+	std::cout<<"done.\n";
 
 	return 0;
 }
