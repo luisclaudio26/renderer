@@ -26,7 +26,7 @@ namespace Renderer
 			Spectra::RGBSpectrum out;
 
 		public:
-			glm::vec4 pos;
+			glm::vec3 pos;
 			float falloff_a, falloff_b;
 			
 			//----------------------------

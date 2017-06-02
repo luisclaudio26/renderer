@@ -31,7 +31,7 @@ namespace Renderer
 				if(type.compare("point") == 0)
 				{
 					PointLight* pl = new PointLight;
-					pl->pos = JSONHelper::vec4FromJSON( in["lightParam"]["pos"] );
+					pl->pos = JSONHelper::vec3FromJSON( in["lightParam"]["pos"] );
 					pl->falloff_a = in["lightParam"]["falloff_a"];
 					pl->falloff_b = in["lightParam"]["falloff_b"];
 					pl->light_spectrum = spectrum;

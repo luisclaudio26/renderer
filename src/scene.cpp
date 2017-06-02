@@ -24,7 +24,12 @@ namespace Renderer
 					for(auto p = n.prim.begin(); p != n.prim.end(); ++p)
 					{
 						Intersection I; (*p)->intersect(r, I);
-						if(I.valid && I.t < out.t) out = I;
+
+						//we consider only intersections in the positive direction
+						//of the ray; it is useless (in this context) to consider
+						//intersection in the negative side! (this implies intersection
+						//with things behind the origin of the ray).
+						if(I.valid && I.t > 0.0f && I.t < out.t) out = I;
 					}
 				}
 				else

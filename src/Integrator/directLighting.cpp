@@ -35,7 +35,7 @@ namespace Renderer
 				//sample each light.
 				//We extract only one sample for point/directional lights,
 				//more for area lights, for example.
-				l->prepare_sampling( *this->scene, eye2obj(inter.t), SAMPLES_PER_LIGHT );
+				l->prepare_sampling( *this->scene, eye2obj(inter.t) + 0.001f * inter.normal, SAMPLES_PER_LIGHT );
 
 				while( l->has_next() )
 				{
@@ -49,7 +49,7 @@ namespace Renderer
 
 					out.r += ls_spectrum.r * brdf.r * cosWiN;
 					out.g += ls_spectrum.g * brdf.g * cosWiN;
-					out.b += ls_spectrum.b * brdf.b * cosWiN;
+					out.b += ls_spectrum.b * brdf.b * cosWiN;	
 				}
 			}
 
