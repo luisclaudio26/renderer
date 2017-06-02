@@ -23,7 +23,7 @@ namespace Renderer
 
 			//Check for occlusion
 			Intersection in; scene_handler.shootCameraRay( Ray(p, -wi.d), in);
-			this->out = in.valid ? RGBSpectrum(0.0f, 0.0f, 0.0f) : this->light_spectrum * falloff;
+			this->out = in.valid ? RGBSpectrum::black() : this->light_spectrum * falloff;
 		}
 
 		bool PointLight::has_next()

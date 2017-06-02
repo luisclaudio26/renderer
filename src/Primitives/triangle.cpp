@@ -48,7 +48,7 @@ namespace Renderer
 			float det = glm::dot(v0v1, pvec);
 
 			//backface culling
-			if( fabs(det) < 0.0000001 ) return;
+			if( det < 0.0000001 ) return;
 			float invDet = 1 / det;
 
 			glm::vec3 tvec = r.o - vertex[0];
