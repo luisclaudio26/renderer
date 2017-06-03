@@ -12,9 +12,9 @@ namespace Renderer
 	{
 		using namespace Geometry;
 
-		#define COST_ISECT 80
+		#define COST_ISECT 20
 		#define COST_TRAV 1
-		#define EMPTY_BONUS 0.2
+		#define EMPTY_BONUS 0.1
 
 		#define START false
 		#define END true
@@ -29,19 +29,8 @@ namespace Renderer
 		{
 			axle = bbox.maximumExtent();
 			int retries = 0, badRefines = 0;
+			std::vector<Edge> edges[3];
 
-			//----------------------------------------
-			//Original heuristic, left here so we can incrementally test
-			//SAH.
-			float sum = 0.0f;	
-			for(auto p = prim.begin(); p != prim.end(); ++p)
-				sum += ((*p)->bbox.min[axle] + (*p)->bbox.max[axle])*0.5f;
-			if(prim.size() == 0)
-				std::cout<<"No primitive to calculate centroid!"<<std::endl;
-			float out = sum / prim.size();
-			//----------------------------------------
-
-			//Start implementation of SAH
 			glm::vec3 d = bbox.max - bbox.min;
 			int bestAxis = -1, bestOffset = -1;
 			float bestCost = std::numeric_limits<float>::max();
@@ -52,33 +41,29 @@ namespace Renderer
 			//TODO: no need to create/sort edges for all three
 			//axis. Do this only if we retry for some reason
 			//(which should be rare).
+			retrySplit:
 
 			//Now sort the bounding boxes so to choose the split point.
-			std::vector<Edge> edges[3];
-			for(int j = 0; j < 3; j++)			
-				for(int i = 0; i < prim.size(); i++)
-				{
-					Primitive* p = prim[i]; Edge eS, eE;
-					
-					eS.t = p->bbox.min[j]; eE.t = p->bbox.max[j];
-					eS.primNum = eE.primNum = i;
-					eS.type = START; eE.type = END;
-					
-					edges[j].push_back( eS );
-					edges[j].push_back( eE );
-				}
+			for(int i = 0; i < prim.size(); i++)
+			{
+				Primitive* p = prim[i]; Edge eS, eE;
+				
+				eS.t = p->bbox.min[axle]; eE.t = p->bbox.max[axle];
+				eS.primNum = eE.primNum = i;
+				eS.type = START; eE.type = END;
+				
+				edges[axle].push_back( eS );
+				edges[axle].push_back( eE );
+			}
 
 			//sort edges
-			for(int i = 0; i < 3; i++)
-				std::sort( edges[i].begin(), edges[i].end(), 
-							[](const Edge& lhs, const Edge& rhs) -> bool {
-								if(lhs.t == rhs.t)
-									return (int)lhs.type < (int)rhs.type;
-								else
-									return lhs.t < rhs.t;
-							});
-
-			retrySplit:
+			std::sort( edges[axle].begin(), edges[axle].end(), 
+						[](const Edge& lhs, const Edge& rhs) -> bool {
+							if(lhs.t == rhs.t)
+								return (int)lhs.type < (int)rhs.type;
+							else
+								return lhs.t < rhs.t;
+						});
 
 			//compute costs of all splits for axis to find best
 			int nBelow = 0, nAbove = prim.size();
@@ -143,9 +128,9 @@ namespace Renderer
 			//if this split is worst then simply traversing
 			//the primitives, stop.
 			if(bestCost > oldCost)
-				return -1.0f;
+				return std::numeric_limits<float>::quiet_NaN();
 
-			return bestCost;
+			return edges[bestAxis][bestOffset].t;
 		}
 
 		void buildNode(kdNode& n, int depth = 0)
@@ -168,7 +153,7 @@ namespace Renderer
 
 			//if c == -1, then it is better not to split
 			//this node!
-			if(c < 0.0f)
+			if(c != c)
 			{
 				n.r = n.l = NULL;
 				return;
@@ -183,6 +168,9 @@ namespace Renderer
 				if((*m)->bbox.min[axle] < c) n.l->prim.push_back( *m );
 				if((*m)->bbox.max[axle] > c) n.r->prim.push_back( *m );
 			}
+
+			std::cout<<" c = "<<c<<std::endl;
+			std::cout<<"N prim left/right: "<<n.l->prim.size()<<", "<<n.r->prim.size()<<std::endl;
 
 			//define new bounding boxes
 			n.l->bbox.min = n.bbox.min; 
