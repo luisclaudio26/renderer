@@ -17,16 +17,23 @@ namespace Renderer
 		public:
 			AABB bbox;
 			kdNode *r, *l;
-			std::vector<Primitive*> prim;
+			//std::vector<Primitive*> prim;
+			std::vector<int> primNum;
 		};
 
 		class kdTree
 		{
 		public:
-			kdNode root;
+			kdNode root; int maxDepth;
+			std::vector<Primitive*> prim;
 
-			void build(const std::vector<Primitive*>& prim);
-			void intersect(const Ray& r, Intersection& out);
+			kdTree() : maxDepth(-1) {}
+			
+			void build(std::vector<Primitive*>&& prim);
+			void hit(const kdNode& n, const Ray& r, Intersection& out) const;
+
+		private:
+			void buildNode(kdNode& n, int depth = 0);
 		};
 	}
 }
