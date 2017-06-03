@@ -17,7 +17,7 @@ namespace Renderer
 		public:
 			AABB bbox;
 			kdNode *r, *l;
-			//std::vector<Primitive*> prim;
+			int axis; float t;
 			std::vector<int> primNum;
 		};
 
@@ -28,9 +28,9 @@ namespace Renderer
 			std::vector<Primitive*> prim;
 
 			kdTree() : maxDepth(-1) {}
-			
+
 			void build(std::vector<Primitive*>&& prim);
-			void hit(const kdNode& n, const Ray& r, Intersection& out) const;
+			void hit(const Ray& r, Intersection& out) const;
 
 		private:
 			void buildNode(kdNode& n, int depth = 0);

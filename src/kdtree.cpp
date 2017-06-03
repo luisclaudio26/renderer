@@ -3,6 +3,7 @@
 #include <cfloat>
 #include <algorithm>
 #include <limits>
+#include <stack>
 #include <glm/gtx/string_cast.hpp>
 #include "../include/geometry.h"
 
@@ -207,6 +208,9 @@ namespace Renderer
 			n.r->bbox.max = n.bbox.max;
 			n.r->bbox.min[bestAxis] = tSplit;
 
+			n.axis = bestAxis;
+			n.t = tSplit;
+
 			//recursively build nodes
 			buildNode(*(n.r), depth+1);
 			buildNode(*(n.l), depth+1);
@@ -216,14 +220,13 @@ namespace Renderer
 		{
 			//copy primitives
 			this->prim = prim;
-
 			this->maxDepth = (int)std::round(8.0 + log2(this->prim.size()));
-
-			this->root.bbox.max = glm::vec3(FLT_MIN, FLT_MIN, FLT_MIN);
-			this->root.bbox.min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
 
 			//find bounding box for the whole scene, and
 			//also push the indices of primitives to the Root
+			this->root.bbox.max = glm::vec3(FLT_MIN, FLT_MIN, FLT_MIN);
+			this->root.bbox.min = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+
 			int p_id = 0;
 			for(auto r = this->prim.begin(); r != this->prim.end(); ++r)
 			{
@@ -241,17 +244,67 @@ namespace Renderer
 			buildNode(this->root);
 		}
 
-		void kdTree::hit(const kdNode& n, const Ray& r, Intersection& out) const
+		typedef struct {
+			const kdNode* n;
+			float tMin, tMax;
+		} NodeToDo;
+
+		void kdTree::hit(const Ray& r, Intersection& out) const
 		{
 			//assumes out.t = Infinity and out.valid = false
 			//in the first call
 			float tmin, tmax;
-			if( n.bbox.intersect(r, tmin, tmax) )
+			if( !root.bbox.intersect(r, tmin, tmax) )
+				return;
+
+			glm::vec3 invDir(1.0f / r.d[0], 1.0f / r.d[1], 1.0f / r.d[2]);
+			
+			std::stack<NodeToDo> todo; 
+			todo.push( (NodeToDo){&root, tmin, tmax} );
+
+			while(!todo.empty())
 			{
-				//If we reached a leaf...
-				if( n.r == NULL && n.l == NULL )
+				const NodeToDo& node = todo.top();
+				todo.pop();
+
+				//PBRT uses this, but I don't know what's tMax:
+				//if(ray.tMax < tMin) break;
+
+				if(node.n->l != NULL && node.n->r != NULL)
 				{
-					for(auto p_id = n.primNum.begin(); p_id != n.primNum.end(); ++p_id)
+					int axis = node.n->axis;
+					float tPlane = (node.n->t - r.o[axis]) * invDir[axis];
+
+					//Select who will be traversed next
+					NodeToDo near, far;
+					bool leftFirst = (r.o[axis] < node.n->t) || (r.o[axis] == node.n->t && r.d[axis] <= 0);
+					
+					if(leftFirst)
+					{
+						near = (NodeToDo){node.n->l, node.tMin, tPlane};
+						far = (NodeToDo){node.n->r, tPlane, node.tMax};
+					}
+					else
+					{
+						near = (NodeToDo){node.n->r, node.tMin, tPlane};
+						far = (NodeToDo){node.n->l, tPlane, node.tMax};
+					}
+					
+					//enqueue near and/or far
+					if(tPlane > node.tMax || tPlane <= 0) //ray won't hit Far box
+						todo.push(near);
+					else if(tPlane < node.tMin) //ray won't hit Near box
+						todo.push(far);
+					else //visit near first, then far
+					{
+						todo.push(far);
+						todo.push(near);
+					}
+				}
+				else
+				{
+					//Inside leaf node: test against primitives.
+					for(auto p_id = node.n->primNum.begin(); p_id != node.n->primNum.end(); ++p_id)
 					{
 						Primitive* p = this->prim[*p_id];
 						Intersection I; p->intersect(r, I);
@@ -262,12 +315,6 @@ namespace Renderer
 						//with things behind the origin of the ray).
 						if(I.valid && I.t > 0.0f && I.t < out.t) out = I;
 					}
-				}
-				else
-				{
-					//intersect with bounding boxes
-					hit((*n.l), r, out);
-					hit(*(n.r), r, out);
 				}
 			}
 		}
