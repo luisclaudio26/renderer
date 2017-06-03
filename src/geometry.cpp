@@ -10,6 +10,7 @@ namespace Renderer
 			//Taken from 
 			//https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
 			//TODO: modify code so it uses max/min, which is faster.
+			/*
 			float tmin = (min[0] - r.o[0]) / r.d[0];
 			float tmax = (max[0] - r.o[0]) / r.d[0];
 
@@ -41,7 +42,26 @@ namespace Renderer
 			if (tzmax < tmax)
 				tmax = tzmax;
 
-			return true; 
+			return true;*/
+
+			t_min = 0.0f; t_max = std::numeric_limits<float>::max();
+
+		    for (int i = 0; i < 3; ++i) 
+		    {
+		        // Update interval for _i_th bounding box slab
+		        float invRayDir = 1 / r.d[i];
+		        float tNear = (min[i] - r.o[i]) * invRayDir;
+		        float tFar = (max[i] - r.o[i]) * invRayDir;
+
+		        // Update parametric interval from slab intersection $t$ values
+		        if (tNear > tFar) std::swap(tNear, tFar);
+
+		        t_min = tNear > t_min ? tNear : t_min;
+		        t_max = tFar < t_max ? tFar : t_max;
+		        if (t_min > t_max) return false;
+		    }
+
+		    return true;
 		}
 
 		int AABB::maximumExtent() const

@@ -30,7 +30,7 @@ namespace Renderer
 			kdTree() : maxDepth(-1) {}
 
 			void build(std::vector<Primitive*>&& prim);
-			void hit(const Ray& r, Intersection& out) const;
+			void hit(const kdNode& n, const Ray& r, Intersection& out) const;
 
 		private:
 			void buildNode(kdNode& n, int depth = 0);
