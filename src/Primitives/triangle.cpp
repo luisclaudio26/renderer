@@ -27,7 +27,7 @@ namespace Renderer
 			bbox.max[2] = glm::max(vertex[0][2], glm::max(vertex[1][2], vertex[2][2]));
 		}
 
-		void Triangle::intersect(const Ray& r, Intersection& out)
+		void Triangle::intersect(const Ray& r, Intersection& out, bool tryBackfaceCulling)
 		{
 			out.valid = false;
 
@@ -40,7 +40,8 @@ namespace Renderer
 			float det = glm::dot(v0v1, pvec);
 
 			//backface culling
-			if( det < 0.0000001 ) return;
+			if(tryBackfaceCulling && det < 0.00000001) return;
+			if(!tryBackfaceCulling && fabs(det) < 0.00000001) return;
 			float invDet = 1 / det;
 
 			glm::vec3 tvec = r.o - vertex[0];

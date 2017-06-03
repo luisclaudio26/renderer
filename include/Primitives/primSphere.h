@@ -15,7 +15,7 @@ namespace Renderer
 			double radius;
 			glm::vec4 center;
 			
-			void intersect(const Ray& r, Intersection& out) override;
+			void intersect(const Ray& r, Intersection& out, bool tryBackfaceCulling = false) override;
 			void defineBBox() override;
 		};
 	}

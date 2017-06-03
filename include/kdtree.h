@@ -21,25 +21,20 @@ namespace Renderer
 			int axis; float t;
 			std::vector<int> primNum;
 		};
-
-		typedef struct {
-			const kdNode* n;
-			float tmin, tmax;
-		} NodeToDo;
-
+		
 		class kdTree
 		{
 		private:
-			mutable std::stack<NodeToDo> stack;
+			mutable bool tryBackfaceCulling;
 
 		public:
 			kdNode root; int maxDepth;
 			std::vector<Primitive*> prim;
 
-			kdTree() : maxDepth(-1) {}
+			kdTree() : maxDepth(-1), tryBackfaceCulling(false) {}
 
 			void build(std::vector<Primitive*>&& prim);
-			void hit(const Ray& r, Intersection& out) const;
+			void hit(const Ray& r, Intersection& out, bool tryBackfaceCulling) const;
 			void hit(const kdNode& n, const Ray& r, float tmin, 
 						float tmax, Intersection& out) const;
 

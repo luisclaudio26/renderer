@@ -11,12 +11,12 @@ namespace Renderer
 		void SceneManager::addLight(const Light::ptr& l) { this->lights.push_back(l); }
 		void SceneManager::addShape(const Shape::ptr& s) { this->shapes.push_back(s); }
 
-		void SceneManager::shootCameraRay(const Ray& r, Intersection& out) const
+		void SceneManager::shootCameraRay(const Ray& r, Intersection& out, bool tryBackfaceCulling) const
 		{
 			out.t = std::numeric_limits<float>::max();
 			out.valid = false;
 
-			tree.hit(r, out);
+			tree.hit(r, out, tryBackfaceCulling);
 		}
 
 		void SceneManager::buildTree()

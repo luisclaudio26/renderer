@@ -31,7 +31,7 @@ namespace Renderer
 			void addShape(const Shape::ptr& s);
 			void buildTree();
 
-			void shootCameraRay(const Geometry::Ray& r, Intersection& out) const;
+			void shootCameraRay(const Geometry::Ray& r, Intersection& out, bool tryBackfaceCulling = false) const;
 		};
 	}
 }

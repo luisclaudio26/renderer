@@ -18,7 +18,7 @@ namespace Renderer
 			BRDF::ptr material;
 			
 			virtual void defineBBox() = 0;
-			virtual void intersect(const Ray& r, Intersection& out) = 0;
+			virtual void intersect(const Ray& r, Intersection& out, bool tryBackfaceCulling = false) = 0;
 		};
 	}
 }

@@ -29,7 +29,7 @@ namespace Renderer
 					float v = 2.0f*(cam->vRes * 0.5f - i) / cam->vRes;
 
 					Ray r; cam->getRay(u, v, r);
-					Intersection inter; scene->shootCameraRay(r, inter);
+					Intersection inter; scene->shootCameraRay(r, inter, true);
 
 					//TODO: Create a base class Spectrum, which has a
 					//method .rgb()

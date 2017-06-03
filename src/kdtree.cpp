@@ -244,8 +244,10 @@ namespace Renderer
 			buildNode(this->root);
 		}
 
-		void kdTree::hit(const Ray& r, Intersection& out) const
+		void kdTree::hit(const Ray& r, Intersection& out, bool tryBackfaceCulling) const
 		{
+			this->tryBackfaceCulling = tryBackfaceCulling;
+
 			//assumes out.t = Infinity and out.valid = false!
 			//Get tmin and tmax for entire bounding box
 			float tmin, tmax;
@@ -311,7 +313,7 @@ namespace Renderer
 				for(auto p_id = n.primNum.begin(); p_id != n.primNum.end(); ++p_id)
 				{
 					Primitive* p = this->prim[*p_id];
-					Intersection I; p->intersect(r, I);
+					Intersection I; p->intersect(r, I, this->tryBackfaceCulling);
 
 					//we consider only intersections in the positive direction
 					//of the ray; it is useless (in this context) to consider

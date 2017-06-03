@@ -13,7 +13,7 @@ namespace Renderer
 			bbox.min = glm::vec3(center[0]-radius, center[1]-radius, center[2]-radius);
 		}
 
-		void PrimSphere::intersect(const Ray& r, Intersection& out)
+		void PrimSphere::intersect(const Ray& r, Intersection& out, bool tryBackfaceCulling)
 		{
 			//I don't know where to move this.
 			const float EPS = 0.0001;
