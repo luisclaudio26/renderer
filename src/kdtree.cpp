@@ -212,8 +212,8 @@ namespace Renderer
 			n.t = tSplit;
 
 			//recursively build nodes
-			buildNode(*(n.r), depth+1);
 			buildNode(*(n.l), depth+1);
+			buildNode(*(n.r), depth+1);
 		}
 
 		void kdTree::build(std::vector<Primitive*>&& prim)
@@ -244,39 +244,66 @@ namespace Renderer
 			buildNode(this->root);
 		}
 
-		typedef struct {
-			const kdNode* n;
-			float tMin, tMax;
-		} NodeToDo;
+		void kdTree::hit(const Ray& r, Intersection& out) const
+		{
+			//assumes out.t = Infinity and out.valid = false!
+			//Get tmin and tmax for entire bounding box
+			float tmin, tmax;
+			if( !root.bbox.intersect(r, tmin, tmax) ) return;
 
-		void kdTree::hit(const kdNode& n, const Ray& r, Intersection& out) const
+			hit(root, r, tmin, tmax, out);
+		}
+
+		void kdTree::hit(const kdNode& n, const Ray& r, 
+							float t_min, float t_max, Intersection& out) const
 		{
 			//assumes out.t = Infinity and out.valid = false
 			//in the first call.
-			float tmin, tmax;
-			if( !n.bbox.intersect(r, tmin, tmax) ) return;
+			
+			//if out.t < t_min we won't find
+			//any useful intersection
+			if(out.t < t_min) return;
 
 			//Not a leaf!
 			if(n.l != NULL && n.r != NULL)
 			{
-				Intersection IL, IR;
-				IL.valid = IR.valid = false;
-				IL.t = IR.t = std::numeric_limits<float>::max();
+				float tSplit = (n.t - r.o[n.axis]) / r.d[n.axis];
 
-				hit(*n.l, r, IL);
-				hit(*n.r, r, IR);
+				//Define near/far boxes
+				kdNode *near, *far;
+				bool leftFirst = (r.o[n.axis] < n.t) 
+									|| (r.o[n.axis] == n.t && r.d[n.axis] <= 0.0f);
 
-				if(IL.valid && IR.valid)
-				{
-					if(IL.t < IR.t)
-						out = IL;
-					else
-						out = IR;
+				if(leftFirst) {
+					near = n.l;
+					far = n.r;
+				} else {
+					near = n.r;
+					far = n.l;
 				}
-				else if(!IL.valid)
-					out = IR;
-				else if(!IR.valid)
-					out = IL;
+
+				//if we hit something in the near box,
+				//we can skip the far one.
+				Intersection INear, IFar;
+				INear.valid = IFar.valid = false;
+				INear.t = IFar.t = std::numeric_limits<float>::max();
+
+				if(tSplit < 0.0f || tSplit >= t_max)
+					hit(*near, r, t_min, t_max, INear);
+				else if(tSplit > 0.0f && tSplit <= t_min)
+					hit(*far, r, t_min, t_max, IFar);
+				else
+				{
+					hit(*near, r, t_min, tSplit, INear);
+					hit(*far, r, tSplit, t_max, IFar);
+				}
+			
+				if(INear.valid && IFar.valid)
+					out = INear.t < IFar.t ? INear : IFar;
+				else if(!INear.valid)
+					out = IFar;
+				else if(!IFar.valid)
+					out = INear;			
 			}
 			else
 			{
@@ -291,7 +318,7 @@ namespace Renderer
 					//intersection in the negative side! (this implies intersection
 					//with things behind the origin of the ray).
 					if(I.valid && I.t > 0.0f && I.t < out.t) out = I;
-				}
+				}	
 			}
 		}
 	}

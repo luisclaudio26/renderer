@@ -16,7 +16,7 @@ namespace Renderer
 			out.t = std::numeric_limits<float>::max();
 			out.valid = false;
 
-			tree.hit(tree.root, r, out);
+			tree.hit(r, out);
 		}
 
 		void SceneManager::buildTree()
