@@ -20,7 +20,7 @@ namespace Renderer
 		class BRDF
 		{
 		public:
-			glm::vec3 emission;
+			RGBSpectrum emission;
 
 			typedef std::shared_ptr<BRDF> ptr;
 

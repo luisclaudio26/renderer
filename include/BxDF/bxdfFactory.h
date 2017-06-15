@@ -2,6 +2,7 @@
 #define BXDF_FACTORY_H
 
 #include "../3rdparty/json.hpp"
+#include "../BxDF/bxdf.h"
 
 namespace Renderer
 {
@@ -18,7 +19,7 @@ namespace Renderer
 				float e_r = in["emission"][0];
 				float e_g = in["emission"][1];
 				float e_b = in["emission"][2];
-				glm::vec3 emission(e_r, e_g, e_b);
+				RGBSpectrum emission(e_r, e_g, e_b);
 
 				if(type.compare("lambertian") == 0)
 				{

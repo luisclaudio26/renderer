@@ -1,6 +1,6 @@
 #include "../../include/Integrator/pathtracer.h"
 
-#define N_SAMPLES 32
+#define N_SAMPLES 100
 
 namespace Renderer
 {
@@ -14,6 +14,7 @@ namespace Renderer
 
 		glm::vec3 sample_hemisphere(const glm::vec3& normal)
 		{
+			/*
 			float elevation = acos(normal[2]);
 			float azymuth = atan2(normal[1], normal[0]);
 
@@ -35,9 +36,19 @@ namespace Renderer
 			glm::vec3 out;
 			out[0] = sin(e) * cos(a);
 			out[1] = sin(e) * sin(a);
-			out[2] = cos(e);
+			out[2] = cos(e); */
 
-			return out;
+
+			float u = (float)rand()/RAND_MAX;
+			float v = (float)rand()/RAND_MAX;
+
+			const float r = sqrt(u);
+			const float theta = PI_TIMES_2 * v;
+
+			const float x = r * cos(theta);
+			const float y = r * sin(theta);
+
+			return glm::vec3(x, y, sqrt(glm::max(0.0f, 1.0f - u)));
 		}
 
 		RGBSpectrum PathTracer::tracepath(const Ray& r, int depth) const
@@ -53,33 +64,35 @@ namespace Renderer
 
 			//we found an intersection. Just return
 			//without recursing (first verstion)
-			out.r = inter.material->emission[0];
-			out.g = inter.material->emission[1];
-			out.b = inter.material->emission[2];
-
-			return out;
+			return inter.material->emission;
 		}
 
 		void PathTracer::integrate(const Ray& eye2obj, const Intersection& inter, RGBSpectrum& out) const
 		{
 			if(inter.valid)
 			{
+				glm::vec3 wo = -eye2obj.d;
 				RGBSpectrum indirect(0.0f, 0.0f, 0.0f);
 
 				for(int i = 0; i < N_SAMPLES; i++)
 				{
+					//get a new direction to shoot ray
 					Ray newR; 
 					newR.o = eye2obj(inter.t); 
 					newR.d = sample_hemisphere(inter.normal);
 
-					RGBSpectrum sample = tracepath( newR, 1 );
+					//trace path in this direction
+					RGBSpectrum Li = tracepath( newR, 1 );
 
-					indirect = indirect + sample;
+					glm::vec3 wi = -newR.d;
+					RGBSpectrum brdf; inter.material->f(wi, wo, inter.normal, brdf);
+
+					//float cosWiN = glm::max(glm::dot(-wi, inter.normal), 0.0f);
+
+					indirect = indirect + (Li * brdf);
 				}
 
-				out.r = inter.material->emission[0] + indirect.r / N_SAMPLES;
-				out.g = inter.material->emission[1] + indirect.g / N_SAMPLES;
-				out.b = inter.material->emission[2] + indirect.b / N_SAMPLES;
+				out = inter.material->emission + indirect * (1.0f/N_SAMPLES);
 			}
 			else 
 				out = RGBSpectrum::black();

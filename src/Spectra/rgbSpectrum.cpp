@@ -19,5 +19,10 @@ namespace Renderer
 			r = s.r; g = s.g; b = s.b;
 			return *this;
 		}
+
+		RGBSpectrum RGBSpectrum::operator*(const RGBSpectrum& s)
+		{
+			return RGBSpectrum(r * s.r, g * s.g, b * s.b);
+		}
 	}
 }
