@@ -5,6 +5,7 @@
 #include "light.h"
 #include "../error.h"
 #include "pointLight.h"
+#include "planeLight.h"
 
 namespace Renderer
 {
@@ -38,8 +39,35 @@ namespace Renderer
 
 					return Light::ptr(pl);
 				}
+				else if(type.compare("area") == 0)
+				{
+					std::string shape = in["lightParam"]["shape"].get<std::string>();
+
+					if( shape.compare("plane") == 0)
+					{
+						PlaneLight* pl = new PlaneLight;
+
+						pl->model2world = JSONHelper::parseTransformations( in["lightParam"]["transformation"] );
+						
+						glm::vec2 bl, ur;
+						bl = JSONHelper::vec2FromJSON( in["lightParam"]["shapeParam"]["bottomLeft"] );
+						ur = JSONHelper::vec2FromJSON( in["lightParam"]["shapeParam"]["upperRight"] );
+
+						glm::vec3 v0, v1, v2, v3;
+						v0 = glm::vec3(0.0f, bl[0], bl[1]);
+						v1 = glm::vec3(0.0f, ur[0], bl[1]);
+						v2 = glm::vec3(0.0f, ur[0], ur[1]);
+						v3 = glm::vec3(0.0f, bl[0], ur[1]);
+
+						pl->bl.vertex[0] = v0; pl->bl.vertex[1] = v1; pl->bl.vertex[2] = v3;					
+						pl->ur.vertex[0] = v1; pl->ur.vertex[1] = v2; pl->ur.vertex[2] = v3;		
+						
+						return Light::ptr(pl);
+					}
+					else
+						LogError("Unsupported shape for area light");
+				}
 				else
-					//TODO: THROW ERROR
 					LogError("Unsupported light");
 			}
 		};
