@@ -47,6 +47,7 @@ namespace Renderer
 					{
 						PlaneLight* pl = new PlaneLight;
 
+						pl->light_spectrum = spectrum;
 						pl->model2world = JSONHelper::parseTransformations( in["lightParam"]["transformation"] );
 						
 						glm::vec2 bl, ur;
@@ -54,13 +55,13 @@ namespace Renderer
 						ur = JSONHelper::vec2FromJSON( in["lightParam"]["shapeParam"]["upperRight"] );
 
 						glm::vec3 v0, v1, v2, v3;
-						v0 = glm::vec3(0.0f, bl[0], bl[1]);
-						v1 = glm::vec3(0.0f, ur[0], bl[1]);
-						v2 = glm::vec3(0.0f, ur[0], ur[1]);
-						v3 = glm::vec3(0.0f, bl[0], ur[1]);
+						v0 = glm::vec3( pl->model2world * glm::vec4(0.0f, bl[0], bl[1], 1.0f) );
+						v1 = glm::vec3( pl->model2world * glm::vec4(0.0f, ur[0], bl[1], 1.0f) );
+						v2 = glm::vec3( pl->model2world * glm::vec4(0.0f, ur[0], ur[1], 1.0f) );
+						v3 = glm::vec3( pl->model2world * glm::vec4(0.0f, bl[0], ur[1], 1.0f) );
 
-						pl->bl.vertex[0] = v0; pl->bl.vertex[1] = v1; pl->bl.vertex[2] = v3;					
-						pl->ur.vertex[0] = v1; pl->ur.vertex[1] = v2; pl->ur.vertex[2] = v3;		
+						pl->bl = glm::mat3(v0, v1, v3);
+						pl->ur = glm::mat3(v1, v2, v3);
 						
 						return Light::ptr(pl);
 					}

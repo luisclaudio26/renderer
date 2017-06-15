@@ -14,7 +14,9 @@ namespace Renderer
 		{
 		public:
 			glm::mat4 model2world;
-			Triangle bl, ur;
+			glm::mat3 bl, ur;
+
+			void generateSamples();
 		};
 	}
 }

@@ -3,7 +3,7 @@
 #include <iostream>
 
 //Where should this be?
-#define SAMPLES_PER_LIGHT 1
+#define SAMPLES_PER_LIGHT 5
 
 namespace Renderer
 {
@@ -41,6 +41,8 @@ namespace Renderer
 				{
 					RGBSpectrum ls_spectrum; glm::vec3 wi;
 					l->next_sample(ls_spectrum, wi);
+
+					std::cout<<"("<<ls_spectrum.r<<", "<<ls_spectrum.g<<", "<<ls_spectrum.b<<"), ";
 
 					RGBSpectrum brdf;
 					material->f(wi, wo, inter.normal, brdf);

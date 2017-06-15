@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <chrono>
+#include <cstdlib>
 
 #include "../3rdparty/json.hpp"
 #include "../include/camera.h"
@@ -24,6 +25,8 @@ using namespace std::chrono;
 
 int main()
 {
+	srand(time(NULL));
+	
 	std::fstream in("../data/mesh.json");
 	nlohmann::json j;
 	in >> j;
