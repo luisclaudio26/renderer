@@ -14,7 +14,6 @@ namespace Renderer
 
 		glm::vec3 sample_hemisphere(const glm::vec3& normal)
 		{
-			/*
 			float elevation = acos(normal[2]);
 			float azymuth = atan2(normal[1], normal[0]);
 
@@ -36,9 +35,14 @@ namespace Renderer
 			glm::vec3 out;
 			out[0] = sin(e) * cos(a);
 			out[1] = sin(e) * sin(a);
-			out[2] = cos(e); */
+			out[2] = cos(e);
 
+			return out;
 
+			/*
+			THIS IS BETTER BUT NOT CORRECT YET, BECAUSE WE
+			MUST ALIGN THE HEMISPHERE WITH THE NORMAL
+			
 			float u = (float)rand()/RAND_MAX;
 			float v = (float)rand()/RAND_MAX;
 
@@ -48,7 +52,7 @@ namespace Renderer
 			const float x = r * cos(theta);
 			const float y = r * sin(theta);
 
-			return glm::vec3(x, y, sqrt(glm::max(0.0f, 1.0f - u)));
+			return glm::vec3(x, y, sqrt(glm::max(0.0f, 1.0f - u)));*/
 		}
 
 		RGBSpectrum PathTracer::tracepath(const Ray& r, int depth) const

@@ -49,10 +49,10 @@ namespace Renderer
 					//Triangle is sent to xz-plane, then we apply
 					//the transformation we want.
 					glm::vec3 v0, v1, v2, v3;
-					v0 = glm::vec3(0.0f, bl[0], bl[1]);
-					v1 = glm::vec3(0.0f, ur[0], bl[1]);
-					v2 = glm::vec3(0.0f, ur[0], ur[1]);
-					v3 = glm::vec3(0.0f, bl[0], ur[1]);
+					v0 = glm::vec3(bl[0], 0.0f, bl[1]);
+					v1 = glm::vec3(ur[0], 0.0f, bl[1]);
+					v2 = glm::vec3(ur[0], 0.0f, ur[1]);
+					v3 = glm::vec3(bl[0], 0.0f, ur[1]);
 
 					p->bl.vertex[0] = v0; p->bl.vertex[1] = v1; p->bl.vertex[2] = v3;					
 					p->ur.vertex[0] = v1; p->ur.vertex[1] = v2; p->ur.vertex[2] = v3;
