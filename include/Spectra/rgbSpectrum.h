@@ -14,6 +14,8 @@ namespace Renderer
 			float r, g, b;
 
 			RGBSpectrum operator*(float f);
+			RGBSpectrum operator+(const RGBSpectrum& s);
+			RGBSpectrum operator=(const RGBSpectrum& s);
 			
 			static RGBSpectrum black() { return RGBSpectrum(0.0, 0.0, 0.0); }
 		};

@@ -15,6 +15,11 @@ namespace Renderer
 			{
 				std::string type = in["type"].get<std::string>();
 
+				float e_r = in["emission"][0];
+				float e_g = in["emission"][1];
+				float e_b = in["emission"][2];
+				glm::vec3 emission(e_r, e_g, e_b);
+
 				if(type.compare("lambertian") == 0)
 				{
 					Lambertian* lamb = new Lambertian;
@@ -26,6 +31,7 @@ namespace Renderer
 					float b = param["color"][2];
 					
 					lamb->color = glm::vec3(r, g, b);
+					lamb->emission = emission;
 
 					return BRDF::ptr(lamb);
 				}
@@ -39,6 +45,7 @@ namespace Renderer
 					
 					spec->color = glm::vec3(r, g, b);
 					spec->gamma = param["gamma"].get<float>();
+					spec->emission = emission;
 					
 					return BRDF::ptr(spec);
 				}

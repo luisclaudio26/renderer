@@ -3,8 +3,9 @@
 
 #include "../../3rdparty/json.hpp"
 #include "../error.h"
-#include "integrator.h"
+
 #include "directLighting.h"
+#include "pathtracer.h"
 
 namespace Renderer
 {
@@ -20,7 +21,9 @@ namespace Renderer
 
 				if(type.compare("DirectLighting") == 0)
 					return Integrator::ptr(new DirectLighting);
-
+				else if(type.compare("PathTracer") == 0)
+					return Integrator::ptr(new PathTracer);
+				
 				//if we're here, there was some error
 				LogError("Unsupported integrator.");
 

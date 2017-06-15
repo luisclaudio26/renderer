@@ -23,11 +23,11 @@ using namespace Integration;
 using namespace Cameras;
 using namespace std::chrono;
 
-int main()
+int main(int argc, char* args[])
 {
 	srand(time(NULL));
 	
-	std::fstream in("../data/mesh.json");
+	std::fstream in( args[1] );
 	nlohmann::json j;
 	in >> j;
 
