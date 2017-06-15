@@ -3,7 +3,7 @@
 #include <iostream>
 
 //Where should this be?
-#define SAMPLES_PER_LIGHT 5
+#define SAMPLES_PER_LIGHT 25
 
 namespace Renderer
 {
@@ -40,9 +40,7 @@ namespace Renderer
 				while( l->has_next() )
 				{
 					RGBSpectrum ls_spectrum; glm::vec3 wi;
-					l->next_sample(ls_spectrum, wi);
-
-					std::cout<<"("<<ls_spectrum.r<<", "<<ls_spectrum.g<<", "<<ls_spectrum.b<<"), ";
+					l->next_sample(ls_spectrum, wi);					
 
 					RGBSpectrum brdf;
 					material->f(wi, wo, inter.normal, brdf);
@@ -53,13 +51,17 @@ namespace Renderer
 					out.g += ls_spectrum.g * brdf.g * cosWiN;
 					out.b += ls_spectrum.b * brdf.b * cosWiN;	
 				}
+
+				out.r /= SAMPLES_PER_LIGHT;
+				out.g /= SAMPLES_PER_LIGHT;
+				out.b /= SAMPLES_PER_LIGHT;
 			}
 
 			//Not sure this is corrects
 			const int n = this->scene->lights.size();
-			out.r /= n;
-			out.g /= n;
-			out.b /= n;
+			
+
+			//std::cout<<"("<<out.r<<", "<<out.g<<", "<<out.b<<"), ";
 
 			return;
 		}
