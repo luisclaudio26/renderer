@@ -1,6 +1,10 @@
 #include "../../include/Integrator/pathtracer.h"
+#include <omp.h>
 
-#define N_SAMPLES 100
+#define N_SAMPLES 10
+
+//TODO: THERE'S SOME PROBLEM WITH THE NORMALS OF THE PLANES,
+//BECAUSE HALF OF THE PLANES ARE DARKER
 
 namespace Renderer
 {
@@ -66,9 +70,31 @@ namespace Renderer
 			Intersection inter; scene->shootCameraRay( r, inter );
 			if(!inter.valid) return out;
 
-			//we found an intersection. Just return
-			//without recursing (first verstion)
-			return inter.material->emission;
+			//we found an intersection. Recursively sample.
+			glm::vec3 wo = -r.d;
+			RGBSpectrum indirect(0.0f, 0.0f, 0.0f);
+
+			for(int i = 0; i < N_SAMPLES; i++)
+			{
+				//get a new direction to shoot ray
+				Ray newR; 
+				newR.o = r(inter.t); 
+				newR.d = sample_hemisphere(inter.normal);
+
+				//trace path in this direction
+				RGBSpectrum Li = tracepath( newR, depth - 1 );
+
+				glm::vec3 wi = -newR.d;
+				RGBSpectrum brdf; inter.material->f(wi, wo, inter.normal, brdf);
+
+				float cosWiN = glm::max(glm::dot(-wi, inter.normal), 0.0f);
+
+				indirect = indirect + (Li * brdf * cosWiN);
+			}
+
+			out = inter.material->emission + indirect * (1.0f/N_SAMPLES);
+
+			return out;
 		}
 
 		void PathTracer::integrate(const Ray& eye2obj, const Intersection& inter, RGBSpectrum& out) const
@@ -77,7 +103,7 @@ namespace Renderer
 			{
 				glm::vec3 wo = -eye2obj.d;
 				RGBSpectrum indirect(0.0f, 0.0f, 0.0f);
-
+				
 				for(int i = 0; i < N_SAMPLES; i++)
 				{
 					//get a new direction to shoot ray
@@ -86,14 +112,14 @@ namespace Renderer
 					newR.d = sample_hemisphere(inter.normal);
 
 					//trace path in this direction
-					RGBSpectrum Li = tracepath( newR, 1 );
+					RGBSpectrum Li = tracepath( newR, 2 );
 
 					glm::vec3 wi = -newR.d;
 					RGBSpectrum brdf; inter.material->f(wi, wo, inter.normal, brdf);
 
-					//float cosWiN = glm::max(glm::dot(-wi, inter.normal), 0.0f);
+					float cosWiN = glm::max(glm::dot(-wi, inter.normal), 0.0f);
 
-					indirect = indirect + (Li * brdf);
+					indirect = indirect + (Li * brdf * cosWiN);
 				}
 
 				out = inter.material->emission + indirect * (1.0f/N_SAMPLES);
