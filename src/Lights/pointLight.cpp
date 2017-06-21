@@ -22,8 +22,8 @@ namespace Renderer
 			float falloff = this->falloff_a / (falloff_b * d);
 
 			//Check for occlusion
-			Intersection in; scene_handler.shootCameraRay( Ray(p, -wi.d), in);
-			this->out = in.valid && in.t > 0.0f ? RGBSpectrum::black() : this->light_spectrum * falloff;
+			Intersection in; scene_handler.shootCameraRay( Ray(p, this->wi.o - p), in);
+			this->out = in.valid && 0.0f <= in.t && in.t <= 1.0f ? RGBSpectrum::black() : this->light_spectrum;
 		}
 
 		bool PointLight::has_next()
