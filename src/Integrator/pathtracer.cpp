@@ -1,7 +1,7 @@
 #include "../../include/Integrator/pathtracer.h"
 #include <omp.h>
 
-#define N_SAMPLES 70
+#define N_SAMPLES 5
 
 //TODO: THERE'S SOME PROBLEM WITH THE NORMALS OF THE PLANES,
 //BECAUSE HALF OF THE PLANES ARE DARKER
@@ -42,89 +42,58 @@ namespace Renderer
 			out[2] = cos(e);
 
 			return out;
-
-			/*
-			THIS IS BETTER BUT NOT CORRECT YET, BECAUSE WE
-			MUST ALIGN THE HEMISPHERE WITH THE NORMAL
-			
-			float u = (float)rand()/RAND_MAX;
-			float v = (float)rand()/RAND_MAX;
-
-			const float r = sqrt(u);
-			const float theta = PI_TIMES_2 * v;
-
-			const float x = r * cos(theta);
-			const float y = r * sin(theta);
-
-			return glm::vec3(x, y, sqrt(glm::max(0.0f, 1.0f - u)));*/
 		}
 
-		RGBSpectrum PathTracer::tracepath(const Ray& r, int depth) const
+		RGBSpectrum PathTracer::path_from(const Ray& start_ray, int depth)
 		{
-			RGBSpectrum out = RGBSpectrum::black();
+			RGBSpectrum out(.0f, .0f, .0f), beta(1.0f, 1.0f, 1.0f);
+			Ray ray = start_ray;
 
-			//max depth reached
-			if(depth == 0) return out;
-			
-			//find intersection
-			Intersection inter; scene->shootCameraRay( r, inter );
-			if(!inter.valid) return out;
-
-			//we found an intersection. Recursively sample.
-			glm::vec3 wo = -r.d;
-			RGBSpectrum indirect(0.0f, 0.0f, 0.0f);
-
-			for(int i = 0; i < N_SAMPLES; i++)
+			for(int bounce = 0; bounce < depth; bounce++)
 			{
-				//get a new direction to shoot ray
-				Ray newR; 
-				newR.o = r(inter.t); 
-				newR.d = sample_hemisphere(inter.normal);
+				//Compute intersection of this ray
+				Intersection isect; scene->shootCameraRay(ray, isect);
+				if(!isect.valid) break;
 
-				//trace path in this direction
-				RGBSpectrum Li = tracepath( newR, depth - 1 );
+				//TODO: Emission light if bounce == 0
 
-				glm::vec3 wi = -newR.d;
-				RGBSpectrum brdf; inter.material->f(wi, wo, inter.normal, brdf);
+				//Compute direct lighting for this bounce,
+				//and accumulate its contribution. This effectively
+				//computes the contribution of a path with length BOUNCE
+				//TODO: Do this for EVERY light source on the scene
+				Light::ptr L_ = scene->lights[0];
+				L_->prepare_sampling( *scene, ray(isect.t) + 0.001f * isect.normal, 1 );
+				
+				RGBSpectrum L; glm::vec3 wi;
+				L_->next_sample(L, wi);
 
-				float cosWiN = glm::max(glm::dot(-wi, inter.normal), 0.0f);
+				RGBSpectrum brdf; isect.material->f(wi, -ray.d, isect.normal, brdf);
+				float cosWiN = glm::max(glm::dot(-wi, isect.normal), 0.0f);
 
-				indirect = indirect + (Li * brdf * cosWiN);
+				RGBSpectrum pBounce = L * brdf * cosWiN;
+				out = out + beta * pBounce;
+
+				//Update ray, so it shoots from the intersection
+				//to a random direction.
+				//TODO: Shoot ray based on BSDF sampling (importance sampling!)
+				glm::vec3 old_d = ray.d;
+				ray.o = ray(isect.t);
+				ray.d = sample_hemisphere(isect.normal);
+
+				//Update beta
+				RGBSpectrum f;
+				isect.material->f(-ray.d, -old_d, isect.normal);
+				float cosWoN = glm::max(glm::dot(ray.d, isect.normal), 0.0f);
+				
+				beta *= f * cosWoN / ( 1/);
 			}
-
-			out = inter.material->emission + indirect * (1.0f/N_SAMPLES);
 
 			return out;
 		}
 
 		void PathTracer::integrate(const Ray& eye2obj, const Intersection& inter, RGBSpectrum& out) const
 		{
-			if(!inter.valid) out = RGBSpectrum::black();
-			else
-			{				
-				glm::vec3 wo = -eye2obj.d;
-				RGBSpectrum indirect(0.0f, 0.0f, 0.0f);
-				
-				for(int i = 0; i < N_SAMPLES; ++i)
-				{
-					//get a new direction to shoot ray
-					Ray newR; 
-					newR.o = eye2obj(inter.t); 
-					newR.d = sample_hemisphere(inter.normal);
-
-					//trace path in this direction
-					RGBSpectrum Li = tracepath( newR, 1 );
-
-					glm::vec3 wi = -newR.d;
-					RGBSpectrum brdf; inter.material->f(wi, wo, inter.normal, brdf);
-
-					float cosWiN = glm::max(glm::dot(-wi, inter.normal), 0.0f);
-
-					indirect = indirect + (Li * brdf * cosWiN);
-				}
-
-				out = inter.material->emission + indirect * (1.0f/N_SAMPLES);
-			}
+			out = RGBSpectrum::black();
 		}
 	}
 }
