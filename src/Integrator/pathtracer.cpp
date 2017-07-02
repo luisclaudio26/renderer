@@ -1,7 +1,7 @@
 #include "../../include/Integrator/pathtracer.h"
 #include <omp.h>
 
-#define N_SAMPLES 10
+#define N_SAMPLES 70
 
 //TODO: THERE'S SOME PROBLEM WITH THE NORMALS OF THE PLANES,
 //BECAUSE HALF OF THE PLANES ARE DARKER
@@ -99,12 +99,13 @@ namespace Renderer
 
 		void PathTracer::integrate(const Ray& eye2obj, const Intersection& inter, RGBSpectrum& out) const
 		{
-			if(inter.valid)
-			{
+			if(!inter.valid) out = RGBSpectrum::black();
+			else
+			{				
 				glm::vec3 wo = -eye2obj.d;
 				RGBSpectrum indirect(0.0f, 0.0f, 0.0f);
 				
-				for(int i = 0; i < N_SAMPLES; i++)
+				for(int i = 0; i < N_SAMPLES; ++i)
 				{
 					//get a new direction to shoot ray
 					Ray newR; 
@@ -112,7 +113,7 @@ namespace Renderer
 					newR.d = sample_hemisphere(inter.normal);
 
 					//trace path in this direction
-					RGBSpectrum Li = tracepath( newR, 2 );
+					RGBSpectrum Li = tracepath( newR, 1 );
 
 					glm::vec3 wi = -newR.d;
 					RGBSpectrum brdf; inter.material->f(wi, wo, inter.normal, brdf);
@@ -124,8 +125,6 @@ namespace Renderer
 
 				out = inter.material->emission + indirect * (1.0f/N_SAMPLES);
 			}
-			else 
-				out = RGBSpectrum::black();
 		}
 	}
 }

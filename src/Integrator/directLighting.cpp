@@ -3,7 +3,7 @@
 #include <iostream>
 
 //Where should this be?
-#define SAMPLES_PER_LIGHT 25
+#define SAMPLES_PER_LIGHT 5
 
 namespace Renderer
 {
