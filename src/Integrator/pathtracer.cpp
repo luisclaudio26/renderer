@@ -1,7 +1,7 @@
 #include "../../include/Integrator/pathtracer.h"
 #include <omp.h>
 
-#define N_SAMPLES 10
+#define N_SAMPLES 50
 
 //TODO: THERE'S SOME PROBLEM WITH THE NORMALS OF THE PLANES,
 //BECAUSE HALF OF THE PLANES ARE DARKER
@@ -37,7 +37,8 @@ namespace Renderer
 			RGBSpectrum out(.0f, .0f, .0f), beta(1.0f, 1.0f, 1.0f);
 			Ray ray = start_ray;
 
-			for(int bounce = 0; bounce < depth; ++bounce)
+			int max = 1 + rand() % depth; //std::cout<<max<<", ";
+			for(int bounce = 0; bounce < max; ++bounce)
 			{
 				//Compute intersection of this ray
 				Intersection isect; scene->shootCameraRay(ray, isect);
@@ -50,41 +51,38 @@ namespace Renderer
 				//and accumulate its contribution. This effectively
 				//computes the contribution of a path with length BOUNCE
 				//TODO: Do this for EVERY light source on the scene
-				Light::ptr L_ = scene->lights[0];
-				L_->prepare_sampling( *scene, ray(isect.t) + 0.001f * isect.normal, 1 );
-				
-				RGBSpectrum L; glm::vec3 wi;
-				L_->next_sample(L, wi);
 
-				RGBSpectrum brdf; isect.material->f(wi, -ray.d, isect.normal, brdf);
-				float cosWiN = glm::max(glm::dot(-wi, isect.normal), 0.0f);
+				if(bounce == max-1)
+				{
+					Light::ptr L_ = scene->lights[0];
+					L_->prepare_sampling( *scene, ray(isect.t) + 0.001f * isect.normal, 1 );
+					
+					RGBSpectrum L; glm::vec3 wi;
+					L_->next_sample(L, wi);
 
-				RGBSpectrum pBounce = L * brdf * cosWiN;
-				out = out + (beta * pBounce);
+					RGBSpectrum brdf; isect.material->f(wi, -ray.d, isect.normal, brdf);
+					float cosWiN = glm::max(glm::dot(-wi, isect.normal), 0.0f);
 
-				//Update ray, so it shoots from the intersection
-				//to a random direction.
-				//TODO: Shoot ray based on BSDF sampling (importance sampling!)
-				glm::vec3 old_d = ray.d;
-				ray.o = ray(isect.t);
-				ray.d = sample_hemisphere(isect.normal);
+					RGBSpectrum pBounce = L * brdf * cosWiN;
+					out = (beta * pBounce);
+				}
+				else
+				{
+					//Update ray, so it shoots from the intersection
+					//to a random direction.
+					//TODO: Shoot ray based on BSDF sampling (importance sampling!)
+					glm::vec3 old_d = ray.d;
+					ray.o = ray(isect.t);
+					ray.d = sample_hemisphere(isect.normal);
 
-				//Update beta
-				RGBSpectrum f;
-				isect.material->f(-ray.d, -old_d, isect.normal, f);
-				float cosWoN = glm::max(glm::dot(ray.d, isect.normal), 0.0f);
+					//Update beta
+					RGBSpectrum f;
+					isect.material->f(ray.d, old_d, isect.normal, f);
+					float cosWoN = glm::max(glm::dot(ray.d, isect.normal), 0.0f);
 
-				//TODO: this should be inside BRDF
-				float lamb_pdf = cosWoN * OVER_PI;
+					beta = beta * (f * cosWoN);
+				}
 
-				//std::cout<<"<"<<cosWiN<<" "<<cosWoN<<" "<<lamb_pdf<<">, ";
-
-				beta = beta * f * cosWoN;
-
-				/*
-				if( beta.r > 1.0f || beta.g > 1.0f || beta.b > 1.0 )
-					std::cout<<"BETA IS TOO LARGE: "<<beta.r<<", "<<beta.g<<", "<<beta.b<<"\n";
-				*/
 			}
 
 			return out;
@@ -95,7 +93,7 @@ namespace Renderer
 			RGBSpectrum acc(0.0f, 0.0f, 0.0f);
 
 			for(int i = 0; i < N_SAMPLES; ++i)
-				acc = acc + path_from(eye2obj, 1);
+				acc = acc + path_from(eye2obj, 3);
 
 			out = acc * (1.0f / N_SAMPLES);
 		}
