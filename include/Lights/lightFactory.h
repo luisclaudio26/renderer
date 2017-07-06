@@ -55,10 +55,10 @@ namespace Renderer
 						ur = JSONHelper::vec2FromJSON( in["lightParam"]["shapeParam"]["upperRight"] );
 
 						glm::vec3 v0, v1, v2, v3;
-						v0 = glm::vec3( pl->model2world * glm::vec4(0.0f, bl[0], bl[1], 1.0f) );
-						v1 = glm::vec3( pl->model2world * glm::vec4(0.0f, ur[0], bl[1], 1.0f) );
-						v2 = glm::vec3( pl->model2world * glm::vec4(0.0f, ur[0], ur[1], 1.0f) );
-						v3 = glm::vec3( pl->model2world * glm::vec4(0.0f, bl[0], ur[1], 1.0f) );
+						v0 = glm::vec3( pl->model2world * glm::vec4(bl[0], 0.0f, bl[1], 1.0f) );
+						v1 = glm::vec3( pl->model2world * glm::vec4(ur[0], 0.0f, bl[1], 1.0f) );
+						v2 = glm::vec3( pl->model2world * glm::vec4(ur[0], 0.0f, ur[1], 1.0f) );
+						v3 = glm::vec3( pl->model2world * glm::vec4(bl[0], 0.0f, ur[1], 1.0f) );
 
 						pl->bl = glm::mat3(v0, v1, v3);
 						pl->ur = glm::mat3(v1, v2, v3);

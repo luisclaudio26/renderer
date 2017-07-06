@@ -1,7 +1,7 @@
 #include "../../include/Integrator/pathtracer.h"
 #include <omp.h>
 
-#define N_SAMPLES 32
+#define N_SAMPLES 10
 
 //TODO: THERE'S SOME PROBLEM WITH THE NORMALS OF THE PLANES,
 //BECAUSE HALF OF THE PLANES ARE DARKER
@@ -19,30 +19,17 @@ namespace Renderer
 
 		glm::vec3 sample_hemisphere(const glm::vec3& normal)
 		{
-			float elevation = acos(normal[2]);
-			float azymuth = atan2(normal[1], normal[0]);
+			float u, v, w;
+			u = ((float)rand()/RAND_MAX) * 2.0f - 1.0f;
+			v = ((float)rand()/RAND_MAX) * 2.0f - 1.0f;
+			w = ((float)rand()/RAND_MAX) * 2.0f - 1.0f;
 
-			float d_e = (((float)rand()/RAND_MAX) * 2.0f - 1.0f) * PI_OVER_2;
-			float d_a = ((float)rand()/RAND_MAX) * PI_TIMES_2;
+			glm::vec3 d(u, v, w);
 
-			float e = elevation+d_e;
-			float a = azymuth+d_a;
+			if( glm::dot(d, normal) < 0 )
+				d = -d;
 
-			//assert elevation is in [0,pi] 
-			//and azymuth is in [0,2pi]
-			if( e > PI ) {
-				e = 2*PI - e;
-				a = a - PI;
-			}
-
-			if( a > 2*PI ) a = a - 2*PI;
-
-			glm::vec3 out;
-			out[0] = sin(e) * cos(a);
-			out[1] = sin(e) * sin(a);
-			out[2] = cos(e);
-
-			return out;
+			return glm::normalize(d);
 		}
 
 		RGBSpectrum PathTracer::path_from(const Ray& start_ray, int depth) const
@@ -57,8 +44,7 @@ namespace Renderer
 				if(!isect.valid) break;
 
 				//TODO: Emission light if bounce == 0
-				if(bounce == 0)
-					out = out + isect.material->emission;
+				//if(bounce == 0) out = out + isect.material->emission;
 
 				//Compute direct lighting for this bounce,
 				//and accumulate its contribution. This effectively
@@ -74,7 +60,7 @@ namespace Renderer
 				float cosWiN = glm::max(glm::dot(-wi, isect.normal), 0.0f);
 
 				RGBSpectrum pBounce = L * brdf * cosWiN;
-				out = out + beta * pBounce;
+				out = out + (beta * pBounce);
 
 				//Update ray, so it shoots from the intersection
 				//to a random direction.
@@ -87,11 +73,18 @@ namespace Renderer
 				RGBSpectrum f;
 				isect.material->f(-ray.d, -old_d, isect.normal, f);
 				float cosWoN = glm::max(glm::dot(ray.d, isect.normal), 0.0f);
-				
+
 				//TODO: this should be inside BRDF
 				float lamb_pdf = cosWoN * OVER_PI;
 
-				beta = beta * f * (cosWoN / lamb_pdf);
+				//std::cout<<"<"<<cosWiN<<" "<<cosWoN<<" "<<lamb_pdf<<">, ";
+
+				beta = beta * f * cosWoN;
+
+				/*
+				if( beta.r > 1.0f || beta.g > 1.0f || beta.b > 1.0 )
+					std::cout<<"BETA IS TOO LARGE: "<<beta.r<<", "<<beta.g<<", "<<beta.b<<"\n";
+				*/
 			}
 
 			return out;
@@ -99,7 +92,7 @@ namespace Renderer
 
 		void PathTracer::integrate(const Ray& eye2obj, const Intersection& inter, RGBSpectrum& out) const
 		{
-			RGBSpectrum acc(.0f, .0f, .0f);
+			RGBSpectrum acc(0.0f, 0.0f, 0.0f);
 
 			for(int i = 0; i < N_SAMPLES; ++i)
 				acc = acc + path_from(eye2obj, 1);

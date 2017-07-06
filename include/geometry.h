@@ -18,6 +18,7 @@ namespace Renderer
 			glm::vec3 o; glm::vec3 d;
 			glm::vec3 operator()(float t) const { return o + d*t; }
 			Ray operator-() const { return Ray(o, -d); }
+			Ray operator=(const Ray& r) { o = r.o; d = r.d; return *this; }
 		};
 
 		typedef struct {
