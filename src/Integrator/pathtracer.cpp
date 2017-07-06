@@ -1,7 +1,7 @@
 #include "../../include/Integrator/pathtracer.h"
 #include <omp.h>
 
-#define N_SAMPLES 5
+#define N_SAMPLES 32
 
 //TODO: THERE'S SOME PROBLEM WITH THE NORMALS OF THE PLANES,
 //BECAUSE HALF OF THE PLANES ARE DARKER
@@ -45,18 +45,20 @@ namespace Renderer
 			return out;
 		}
 
-		RGBSpectrum PathTracer::path_from(const Ray& start_ray, int depth)
+		RGBSpectrum PathTracer::path_from(const Ray& start_ray, int depth) const
 		{
 			RGBSpectrum out(.0f, .0f, .0f), beta(1.0f, 1.0f, 1.0f);
 			Ray ray = start_ray;
 
-			for(int bounce = 0; bounce < depth; bounce++)
+			for(int bounce = 0; bounce < depth; ++bounce)
 			{
 				//Compute intersection of this ray
 				Intersection isect; scene->shootCameraRay(ray, isect);
 				if(!isect.valid) break;
 
 				//TODO: Emission light if bounce == 0
+				if(bounce == 0)
+					out = out + isect.material->emission;
 
 				//Compute direct lighting for this bounce,
 				//and accumulate its contribution. This effectively
@@ -97,7 +99,12 @@ namespace Renderer
 
 		void PathTracer::integrate(const Ray& eye2obj, const Intersection& inter, RGBSpectrum& out) const
 		{
-			out = RGBSpectrum::black();
+			RGBSpectrum acc(.0f, .0f, .0f);
+
+			for(int i = 0; i < N_SAMPLES; ++i)
+				acc = acc + path_from(eye2obj, 1);
+
+			out = acc * (1.0f / N_SAMPLES);
 		}
 	}
 }
