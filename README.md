@@ -1,4 +1,4 @@
-# Louie's physically-based renderer
+# Luis' physically-based renderer
 
 <img src="https://raw.githubusercontent.com/luisclaudio26/renderer/master/softShadowBunny.png" width="300"> <img src="https://raw.githubusercontent.com/luisclaudio26/renderer/master/coolDragon.png" width="300">
 
