@@ -12,6 +12,7 @@ namespace Renderer
 	{
 		using namespace Geometry;
 
+		#define OVER_PI 0.318309886
 		#define PI_OVER_2 1.570796327
 		#define PI_TIMES_2 6.283185307
 		#define PI 3.141592654
@@ -82,10 +83,13 @@ namespace Renderer
 
 				//Update beta
 				RGBSpectrum f;
-				isect.material->f(-ray.d, -old_d, isect.normal);
+				isect.material->f(-ray.d, -old_d, isect.normal, f);
 				float cosWoN = glm::max(glm::dot(ray.d, isect.normal), 0.0f);
 				
-				beta *= f * cosWoN / ( 1/);
+				//TODO: this should be inside BRDF
+				float lamb_pdf = cosWoN * OVER_PI;
+
+				beta = beta * f * (cosWoN / lamb_pdf);
 			}
 
 			return out;
