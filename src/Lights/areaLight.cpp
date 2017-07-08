@@ -26,16 +26,22 @@ namespace Renderer
 
 		void AreaLight::next_sample( Spectra::RGBSpectrum& out, glm::vec3& wi )
 		{
-			glm::vec3 sample = samples[ n_remaining_samples ];			
+			glm::vec3 sample = samples[ n_remaining_samples-1 ];			
+			glm::vec3 origin2sample = sample-origin;
+
+			//std::cout<<glm::to_string(sample)<<", ";
+
+			float falloff = 1.0f / glm::dot(origin2sample, origin2sample);
 
 			Ray ray;
 			ray.o = origin;
-			ray.d = glm::normalize(sample-origin);
+			ray.d = sqrtf(falloff) * origin2sample; // this is a way to normalize vector without
+												   // recomputing its norm
 
 			wi = -ray.d; n_remaining_samples--;
 
 			Intersection I; scene->shootCameraRay( ray, I );
-			out = (I.valid && 0.0f <= I.t && I.t <= 1.0f) ? RGBSpectrum::black() : light_spectrum;
+			out = (I.valid && 0.0f <= I.t && I.t <= 1.0f) ? RGBSpectrum::black() :  light_spectrum;
 		}
 
 		std::string AreaLight::str()
