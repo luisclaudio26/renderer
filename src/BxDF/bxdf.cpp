@@ -6,6 +6,8 @@ namespace Renderer
 {
 	namespace BxDF
 	{
+		#define OVER_PI 0.318309886
+
 		void Lambertian::f(const glm::vec3& wi, const glm::vec3& wo, const glm::vec3& normal, RGBSpectrum& out) const
 		{
 			out.r = color[0];

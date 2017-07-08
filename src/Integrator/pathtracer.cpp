@@ -19,17 +19,30 @@ namespace Renderer
 
 		glm::vec3 sample_hemisphere(const glm::vec3& normal)
 		{
-			float u, v, w;
-			u = ((float)rand()/RAND_MAX) * 2.0f - 1.0f;
-			v = ((float)rand()/RAND_MAX) * 2.0f - 1.0f;
-			w = ((float)rand()/RAND_MAX) * 2.0f - 1.0f;
+			float elevation = acos(normal[2]);
+			float azymuth = atan2(normal[1], normal[0]);
 
-			glm::vec3 d(u, v, w);
+			float d_e = (((float)rand()/RAND_MAX) * 2.0f - 1.0f) * PI_OVER_2;
+			float d_a = ((float)rand()/RAND_MAX) * PI_TIMES_2;
 
-			if( glm::dot(d, normal) < 0 )
-				d = -d;
+			float e = elevation+d_e;
+			float a = azymuth+d_a;
 
-			return glm::normalize(d);
+			//assert elevation is in [0,pi] 
+			//and azymuth is in [0,2pi]
+			if( e > PI ) {
+				e = 2*PI - e;
+				a = a - PI;
+			}
+
+			if( a > 2*PI ) a = a - 2*PI;
+
+			glm::vec3 out;
+			out[0] = sin(e) * cos(a);
+			out[1] = sin(e) * sin(a);
+			out[2] = cos(e);
+
+			return out;
 		}
 
 		RGBSpectrum PathTracer::path_from(const Ray& start_ray, int depth) const
@@ -76,61 +89,7 @@ namespace Renderer
 				float cosWoN = glm::max(glm::dot(ray.d, isect.normal), 0.0f);
 
 				beta = beta * (f * cosWoN);
-
-				//russian roulette
 			}
-
-
-
-			//int max = 1 + rand() % depth; //std::cout<<max<<", ";
-			//int max = depth;
-			/*
-			for(int bounce = 1; bounce <= max; ++bounce)
-			{
-				//Compute intersection of this ray
-				Intersection isect; scene->shootCameraRay(ray, isect);
-				if(!isect.valid) break;
-
-				//TODO: Emission light if bounce == 0
-				if(bounce == 0) out = out + isect.material->emission;
-
-				//Compute direct lighting for this bounce,
-				//and accumulate its contribution. This effectively
-				//computes the contribution of a path with length BOUNCE
-				//TODO: Do this for EVERY light source on the scene
-
-				if(bounce == max)
-				{
-					Light::ptr L_ = scene->lights[0];
-					L_->prepare_sampling( *scene, ray(isect.t) + 0.001f * isect.normal, 1 );
-					
-					RGBSpectrum L; glm::vec3 wi;
-					L_->next_sample(L, wi);
-
-					RGBSpectrum brdf; isect.material->f(wi, -ray.d, isect.normal, brdf);
-					float cosWiN = glm::max(glm::dot(-wi, isect.normal), 0.0f);
-
-					RGBSpectrum pBounce = L * brdf * cosWiN;
-					out = (beta * pBounce);
-				}
-				else
-				{
-					//Update ray, so it shoots from the intersection
-					//to a random direction.
-					//TODO: Shoot ray based on BSDF sampling (importance sampling!)
-					glm::vec3 old_d = ray.d;
-					ray.o = ray(isect.t) + 0.001f * isect.normal;
-					ray.d = sample_hemisphere(isect.normal);
-
-					//Update beta
-					RGBSpectrum f;
-					isect.material->f(ray.d, old_d, isect.normal, f);
-					float cosWoN = glm::max(glm::dot(ray.d, isect.normal), 0.0f);
-
-					beta = beta * (f * cosWoN);
-				}
-			}
-			*/
 
 			return out;
 		}
@@ -140,7 +99,7 @@ namespace Renderer
 			RGBSpectrum acc(0.0f, 0.0f, 0.0f);
 
 			for(int i = 0; i < N_SAMPLES; ++i)
-				acc = acc + path_from(eye2obj, 4);
+				acc = acc + path_from(eye2obj, 3);
 
 			out = acc * (1.0f / N_SAMPLES);
 		}

@@ -41,7 +41,7 @@ namespace Renderer
 			wi = -ray.d; n_remaining_samples--;
 
 			Intersection I; scene->shootCameraRay( ray, I );
-			out = (I.valid && 0.0f <= I.t && I.t <= 1.0f) ? RGBSpectrum::black() :  light_spectrum;
+			out = (I.valid && 0.0f <= I.t && I.t <= 1.0f) ? RGBSpectrum::black() : light_spectrum;
 		}
 
 		std::string AreaLight::str()
