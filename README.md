@@ -1,8 +1,11 @@
 # Luis' physically-based renderer
 
-<img src="https://raw.githubusercontent.com/luisclaudio26/renderer/master/softShadowBunny.png" width="300"> <img src="https://raw.githubusercontent.com/luisclaudio26/renderer/master/coolDragon.png" width="300">
+<img src="https://raw.githubusercontent.com/luisclaudio26/renderer/master/output/softShadowBunny.png" width="400"> <img src="https://raw.githubusercontent.com/luisclaudio26/renderer/master/output/coolDragon.png" width="400">
 
 Stanford bunny and dragon, rendered with direct illumination only, both with original size of 1024x768. Bunny took ~5s to render and Dragon ~30s.
+
+ <img src="https://raw.githubusercontent.com/luisclaudio26/renderer/master/output/cornellBox.png" width="800">
+Cornell box with bunny and sphere, 1024x768, 50spp. Took about 430s to render.
 
 ## Overview
 This is my first attempt to create a renderer system with support to multiple techniques of light transport simulation. I started this project with the intention of following verbatim the construction of PBRT as described in the book Physically-Based Rendering, but soon I realized that it was better to create a simpler, smaller project which covered the most fundamental techniques, and then pass on to a more complex (and better implemented) system.
