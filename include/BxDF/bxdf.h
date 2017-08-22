@@ -25,6 +25,8 @@ namespace Renderer
 			typedef std::shared_ptr<BRDF> ptr;
 
 			virtual void f(const glm::vec3& wi, const glm::vec3& wo, const glm::vec3& normal, RGBSpectrum& out) const = 0;
+			virtual float pdf(const glm::vec3& wi, const glm::vec3& wo, const glm::vec3& normal) const = 0;
+			virtual void sampleBRDF(const glm::vec3& wi, const glm::vec3& normal, glm::vec3& wo, float& p) const = 0;
 			virtual std::string str() const { return std::string("[Base BRDF]"); };
 		};
 
@@ -32,7 +34,15 @@ namespace Renderer
 		{
 		public:
 			glm::vec3 color;
-			void f(const glm::vec3& wi, const glm::vec3& wo, const glm::vec3& normal, RGBSpectrum& out) const override;
+			void f(const glm::vec3& wi, const glm::vec3& wo, 
+					const glm::vec3& normal, RGBSpectrum& out) const override;
+
+			float pdf(const glm::vec3& wi, const glm::vec3& wo, 
+								const glm::vec3& normal) const override;
+
+			void sampleBRDF(const glm::vec3& wi, const glm::vec3& normal, 
+							glm::vec3& wo, float& p) const override;
+
 			std::string str() const override;
 		};
 
@@ -40,7 +50,15 @@ namespace Renderer
 		{
 		public:
 			glm::vec3 color; float gamma;
-			void f(const glm::vec3& wi, const glm::vec3& wo, const glm::vec3& normal, RGBSpectrum& out) const override;
+			void f(const glm::vec3& wi, const glm::vec3& wo, 
+					const glm::vec3& normal, RGBSpectrum& out) const override;
+
+			float pdf(const glm::vec3& wi, const glm::vec3& wo, 
+								const glm::vec3& normal) const override;
+
+			void sampleBRDF(const glm::vec3& wi, const glm::vec3& normal, 
+							glm::vec3& wo, float& p) const override;
+
 			std::string str() const override;
 		};
 	}

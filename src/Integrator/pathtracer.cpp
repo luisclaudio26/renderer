@@ -77,17 +77,21 @@ namespace Renderer
 				//Update ray, so it shoots from the intersection
 				//to a random direction.
 				//TODO: Shoot ray based on BSDF sampling (importance sampling!)
-				glm::vec3 old_d = ray.d;
+				glm::vec3 old_d = ray.d; float pdf;
 				ray.o = ray(isect.t) + 0.001f * isect.normal;
-				ray.d = sample_hemisphere(isect.normal);
+				//ray.d = sample_hemisphere(isect.normal);
+				isect.material->sampleBRDF(-old_d, isect.normal, ray.d, pdf);
 
-				//Update beta and Russian roulette termination
+				//Update beta
 				RGBSpectrum f;
 				isect.material->f(ray.d, old_d, isect.normal, f);
 				float cosWoN = glm::max(glm::dot(ray.d, isect.normal), 0.0f);
 
+				beta = beta * (f * (cosWoN * 1.0/pdf));
+
+				//russian roulette termination
 				if( RAND01 < P_TERMINATE ) break;
-				else beta = beta * (f * (cosWoN * 1/(1-P_TERMINATE)));
+				else beta = beta * (1/(1-P_TERMINATE));
 			}
 
 			return out;
