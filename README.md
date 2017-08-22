@@ -1,4 +1,4 @@
-# Luis' physically-based renderer
+# Luis' Path-tracer
 
 <img src="https://raw.githubusercontent.com/luisclaudio26/renderer/master/output/softShadowBunny.png" width="400"> <img src="https://raw.githubusercontent.com/luisclaudio26/renderer/master/output/coolDragon.png" width="400">
 
@@ -16,7 +16,7 @@ I make use of C++11 STL (smart pointers, <algorithm> algos and the usual contain
 
 The renderer currently handles the following:
 
-- Integration: Direct illumination
+- Integration: Direct illumination, Path-tracing
 - Lights: Point lights, plane area lights
 - Geometry: Spheres, planes, triangle meshes
 - Materials: Lambertian, and a Specular BRDF I designed so to have different tests, but it's not that good/correct
@@ -27,6 +27,5 @@ The renderer currently handles the following:
 
 I'm working hard to have the following working in the next 30 or 40 days:
 
-- Integration: Path-tracing
 - Lights: Eliminate the distinction between lights and meshes, and just add an emission profile to meshes
 - Acceleration: kd-tree traversal in GPU using CUDA
