@@ -34,6 +34,8 @@ namespace Renderer
 					//TODO: Create a base class Spectrum, which has a
 					//method .rgb()
 					RGBSpectrum p; this->integrate(r, inter, p);
+					
+					p.gammaEncode();
 					Pixel255& out = img[ i*cam->hRes + j ];
 					out.r = (unsigned char)(p.r*255);
 					out.g = (unsigned char)(p.g*255);

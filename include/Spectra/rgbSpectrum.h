@@ -17,6 +17,7 @@ namespace Renderer
 			RGBSpectrum operator*(const RGBSpectrum& s);
 			RGBSpectrum operator+(const RGBSpectrum& s);
 			RGBSpectrum operator=(const RGBSpectrum& s);
+			void gammaEncode();
 			
 			static RGBSpectrum black() { return RGBSpectrum(0.0f, 0.0f, 0.0f); }
 		};

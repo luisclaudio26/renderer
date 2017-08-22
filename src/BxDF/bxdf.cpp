@@ -13,6 +13,8 @@ namespace Renderer
 			out.r = color[0];
 			out.g = color[1];
 			out.b = color[2];
+
+			out = out * OVER_PI;
 		}
 
 		std::string Lambertian::str() const
