@@ -15,7 +15,7 @@ namespace Renderer
 			void integrate(const Ray& eye2obj, 
 							const Intersection& inter, RGBSpectrum& out) const override;
 		public:
-			RGBSpectrum path_from(const Ray& start_ray, int depth = 2) const;
+			RGBSpectrum path_from(const Ray& start_ray) const;
 		};
 	}
 }
